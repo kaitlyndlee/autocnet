@@ -1,0 +1,496 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>utils.utils — Utility Functions &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="utils.evaluation_measures — Statistical Evaluation Measures" href="evaluation_measures.html" />
+    <link rel="prev" title="utils — Utility Functions" href="index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a><ul class="current">
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">utils.utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="evaluation_measures.html"><code class="docutils literal"><span class="pre">utils.evaluation_measures</span></code> &#8212; Statistical Evaluation Measures</a></li>
+<li class="toctree-l5"><a class="reference internal" href="folds.html"><code class="docutils literal"><span class="pre">utils.folds</span></code> &#8212; Spectral Utilities</a></li>
+<li class="toctree-l5"><a class="reference internal" href="isis_serial_numbers.html"><code class="docutils literal"><span class="pre">utils.isis_serial_numbers</span></code> &#8212; Generate ISIS Serial Numbers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="observable.html"><code class="docutils literal"><span class="pre">utils.observable</span></code> &#8212; Stateful Observable Base Class</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+      <li>Next: <a href="evaluation_measures.html" title="next chapter"><code class="docutils literal"><span class="pre">utils.evaluation_measures</span></code> &#8212; Statistical Evaluation Measures</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="utils-utils-utility-functions">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">utils.utils</span></code> &#8212; Utility Functions<a class="headerlink" href="#utils-utils-utility-functions" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">utils.utils</span></code> module includes a collection of utility functions</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.utils.utils"></span><dl class="function">
+<dt id="autocnet.utils.utils.array_to_poly">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">array_to_poly</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#array_to_poly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.array_to_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a geojson geom
+:param array: 2-D array of size (n, 2) of x, y coordinates
+:type array: array-like</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>geom</strong> &#8211; geojson containing the necessary data to construct
+a poly gon</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">GeoJson</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.calculate_slope">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">calculate_slope</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#calculate_slope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.calculate_slope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the 2-dimensional slope between the points in two dataframes each containing two columns [&#8216;x&#8217;, &#8216;y&#8217;]
+The slope is calculated from x1 to x2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x1</strong> (<em>dataframe</em>) &#8211; Each row is a point with columns [&#8216;x&#8217;, &#8216;y&#8217;]</li>
+<li><strong>x2</strong> (<em>dataframe</em>) &#8211; Each row is a point with columns [&#8216;x&#8217;, &#8216;y&#8217;]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dataframe with the slope between the points in x1 and x2 for each row.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.cartesian">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">cartesian</code><span class="sig-paren">(</span><em>arrays</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#cartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a cartesian product of input arrays.
+:param arrays: 1-D arrays to form the cartesian product of.
+:type arrays: list of array-like
+:param out: Array to place the cartesian product in.
+:type out: ndarray</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>out</strong> (<em>ndarray</em>) &#8211; 2-D array of shape (M, len(arrays)) containing cartesian products
+formed of input arrays.</li>
+<li><em>from scikit-learn</em></li>
+<li><strong>https</strong> (<em>//github.com/scikit-learn/scikit-learn/blob/master/sklearn/utils/extmath.py</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.checkbandnumbers">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">checkbandnumbers</code><span class="sig-paren">(</span><em>bands</em>, <em>checkbands</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#checkbandnumbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.checkbandnumbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of input bands, check that the passed
+tuple contains those bands.</p>
+<p>In case of THEMIS, we check for band 9 as band 9 is the temperature
+band required to derive thermal temperature.  We also check for band 10
+which is required for TES atmosphere calculations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bands</strong> (<em>tuple</em>) &#8211; of bands in the input image</li>
+<li><strong>checkbands</strong> (<em>list</em>) &#8211; of bands to check against</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if the bands are present, else False</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.checkdeplaid">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">checkdeplaid</code><span class="sig-paren">(</span><em>incidence</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#checkdeplaid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.checkdeplaid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an incidence angle, select the appropriate deplaid method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>incidence</strong> (<em>float</em>) &#8211; incidence angle extracted from the campt results.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.checkmonotonic">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">checkmonotonic</code><span class="sig-paren">(</span><em>iterable</em>, <em>piecewise=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#checkmonotonic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.checkmonotonic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a given iterable is monotonically increasing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>iterable</strong> (<em>iterable</em>) &#8211; Any Python iterable object</li>
+<li><strong>piecewise</strong> (<em>boolean</em>) &#8211; If false, return a boolean for the entire iterable,
+else return a list with elementwise monotinicy checks</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>monotonic</strong> &#8211; A boolean list of all True if monotonic, or including
+an inflection point</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool/list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.crossform">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">crossform</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#crossform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.crossform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cross form, e.g. a in the cross product of a b.
+:param a: (3,) vector
+:type a: ndarray</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>a</strong> &#8211; (3,3)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.find_in_dict">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">find_in_dict</code><span class="sig-paren">(</span><em>obj</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#find_in_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.find_in_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively find an entry in a dictionary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<em>dict</em>) &#8211; The dictionary to search</li>
+<li><strong>key</strong> (<em>str</em>) &#8211; The key to find in the dictionary</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>item</strong> &#8211; The value from the dictionary</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">obj</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.find_nested_in_dict">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">find_nested_in_dict</code><span class="sig-paren">(</span><em>data</em>, <em>key_list</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#find_nested_in_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.find_nested_in_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverse a list of keys into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>dict</em>) &#8211; The dictionary to be traversed</li>
+<li><strong>key_list</strong> (<em>list</em>) &#8211; The list of keys to be travered.  Keys are
+traversed in the order they are entered in
+the list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>value</strong> &#8211; The value in the dict</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.getnearest">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">getnearest</code><span class="sig-paren">(</span><em>iterable</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#getnearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.getnearest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an iterable, get the index nearest to the input value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>iterable</strong> (<em>iterable</em>) &#8211; An iterable to search</li>
+<li><strong>value</strong> (<em>int</em><em>, </em><em>float</em>) &#8211; The value to search for</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The index into the list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.make_homogeneous">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">make_homogeneous</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#make_homogeneous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.make_homogeneous" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Convert a set of points (n x dim array) to</dt>
+<dd>homogeneous coordinates.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>points</strong> (<em>arraylike</em>) &#8211; n x m array of points, where n is the number
+of points.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">n x m + 1 array of homogeneous points</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">arraylike</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.normalize_vector">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">normalize_vector</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#normalize_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.normalize_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize a standard form line</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<em>ndarray</em>) &#8211; Standard form of a line (Ax + By + C = 0)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>line</strong> &#8211; The normalized line</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_vector</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">array([[ 0.88280225,  0.4697448 ,  0.11460811],</span>
+<span class="go">   [ 0.26090555,  0.96536433,  0.91648305],</span>
+<span class="go">   [ 0.58271501,  0.81267657,  0.30796395]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.remove_field_name">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">remove_field_name</code><span class="sig-paren">(</span><em>a</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#remove_field_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.remove_field_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a numpy structured array, remove a column and return
+a copy of the remainder of the array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>ndarray</em>) &#8211; Numpy structured array</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; of the index (column) to be removed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>b</strong> &#8211; Numpy structured array with the &#8216;name&#8217; column removed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.reproj_corner">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">reproj_corner</code><span class="sig-paren">(</span><em>H</em>, <em>corner</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#reproj_corner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.reproj_corner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reproject a pixel in one image into another image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>H</strong> (<em>object</em>) &#8211; (3,3) ndarray or Homography object</li>
+<li><strong>corner</strong> (<em>iterable</em>) &#8211; A 2 element iterable in the form x, y</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.utils.utils.scale_point">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">scale_point</code><span class="sig-paren">(</span><em>point</em>, <em>centroid</em>, <em>scale</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#scale_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.scale_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a point, centroid, and a scalar scales the given pointer
+around the given centroid</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>point</strong> (<em>tuple</em>) &#8211; (x, y) coordinates for a given point</li>
+<li><strong>centroid</strong> (<em>tuple</em>) &#8211; (x, y, 0) coordinates for the centroid of a polygon</li>
+<li><strong>scale</strong> (<em>int</em>) &#8211; The multiplier to scale by</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>vector</strong> &#8211; (2, 1) array of the scaled point returned in x, y form</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/utils/utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

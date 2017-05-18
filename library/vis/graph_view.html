@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vis.graph_view — Graph Visualization &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="vis — Data Visualization" href="index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a><ul class="current">
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">vis.graph_view</span></code> &#8212; Graph Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vis-graph-view-graph-visualization">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">vis.graph_view</span></code> &#8212; Graph Visualization<a class="headerlink" href="#vis-graph-view-graph-visualization" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">vis.graph_view</span></code> module supports visualization of candidate graph
+objects, nodes, and edges.  This is basic visualization functionality
+that is monkey patched in to the graph objects.  This is not intended to be
+low level diagnostic visualization</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.vis.graph_view"></span><dl class="function">
+<dt id="autocnet.vis.graph_view.cluster_plot">
+<code class="descclassname">autocnet.vis.graph_view.</code><code class="descname">cluster_plot</code><span class="sig-paren">(</span><em>graph</em>, <em>ax=None</em>, <em>cmap='Spectral'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/vis/graph_view.html#cluster_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.vis.graph_view.cluster_plot" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>graph</strong> (<em>object</em>) &#8211; A networkX or derived graph object</li>
+<li><strong>ax</strong> (<em>object</em>) &#8211; A MatPlotLib axes object</li>
+<li><strong>cmap</strong> (<em>str</em>) &#8211; A MatPlotLib color map string. Default &#8216;Spectral&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax</strong> &#8211; A MatPlotLib axes object that was either passed in
+or a new axes object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.vis.graph_view.plot_edge">
+<code class="descclassname">autocnet.vis.graph_view.</code><code class="descname">plot_edge</code><span class="sig-paren">(</span><em>edge</em>, <em>ax=None</em>, <em>clean_keys=[]</em>, <em>image_space=100</em>, <em>downsampling=1</em>, <em>scatter_kwargs={}</em>, <em>line_kwargs={}</em>, <em>image_kwargs={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/vis/graph_view.html#plot_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.vis.graph_view.plot_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the correspondences for a given edge</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>edge</strong> (<em>object</em>) &#8211; A graph edge object</li>
+<li><strong>ax</strong> (<em>object</em>) &#8211; A MatPlotLIb axes object</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; of strings of masking array names to apply</li>
+<li><strong>image_space</strong> (<em>int</em>) &#8211; The number of pixels to insert between the images</li>
+<li><strong>downsample</strong> (<em>bool</em>) &#8211; </li>
+<li><strong>scatter_kwargs</strong> (<em>dict</em>) &#8211; of MatPlotLib arguments to be applied to the scatter plots</li>
+<li><strong>line_kwargs</strong> (<em>dict</em>) &#8211; of MatPlotLib arguments to be applied to the lines connecting matches</li>
+<li><strong>image_kwargs</strong> (<em>dict</em>) &#8211; of MatPlotLib arguments to be applied to the image rendering</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax</strong> &#8211; A MatPlotLib axes object.  Either the argument passed in
+or a new object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.vis.graph_view.plot_graph">
+<code class="descclassname">autocnet.vis.graph_view.</code><code class="descname">plot_graph</code><span class="sig-paren">(</span><em>graph</em>, <em>ax=None</em>, <em>cmap='Spectral'</em>, <em>labels=False</em>, <em>font_size=12</em>, <em>clusters=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/vis/graph_view.html#plot_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.vis.graph_view.plot_graph" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>graph</strong> (<em>object</em>) &#8211; A networkX or derived graph object</li>
+<li><strong>ax</strong> (<em>objext</em>) &#8211; A MatPlotLib axes object</li>
+<li><strong>cmap</strong> (<em>str</em>) &#8211; A MatPlotLib color map string. Default &#8216;Spectral&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax</strong> &#8211; A MatPlotLib axes object. Either the argument passed in
+or a new object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.vis.graph_view.plot_node">
+<code class="descclassname">autocnet.vis.graph_view.</code><code class="descname">plot_node</code><span class="sig-paren">(</span><em>node</em>, <em>ax=None</em>, <em>clean_keys=[]</em>, <em>index_mask=None</em>, <em>downsampling=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/vis/graph_view.html#plot_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.vis.graph_view.plot_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the array and keypoints for a given node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>node</strong> (<em>object</em>) &#8211; A Node object from which data is extracted</li>
+<li><strong>ax</strong> (<em>object</em>) &#8211; A MatPlotLIb axes object</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; of strings of masking array names to apply</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; of MatPlotLib plotting options</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax</strong> &#8211; A MatPlotLib axes object.  Either the argument passed in
+or a new object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/vis/graph_view.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

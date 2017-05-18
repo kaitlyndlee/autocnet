@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>autocnet.matcher.cpu_decompose &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for autocnet.matcher.cpu_decompose</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">cdist</span>
+
+<span class="kn">from</span> <span class="nn">autocnet.matcher.feature</span> <span class="k">import</span> <span class="n">FlannMatcher</span>
+<span class="kn">from</span> <span class="nn">autocnet.matcher.feature_matcher</span> <span class="k">import</span> <span class="n">match</span>
+<span class="kn">from</span> <span class="nn">autocnet.transformation.decompose</span> <span class="k">import</span> <span class="n">coupled_decomposition</span>
+
+
+<span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiteration</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+              <span class="n">buf_dist</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ndv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Similar to match, this method first decomposed the image into</span>
+<span class="sd">    $4^{maxiteration}$ subimages and applys matching between each sub-image.</span>
+
+<span class="sd">    This method is potential slower than the standard match due to the</span>
+<span class="sd">    overhead in matching, but can be significantly more accurate.  The</span>
+<span class="sd">    increase in accuracy is a function of the total image size.  Suggested</span>
+<span class="sd">    values for maxiteration are provided below.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : int</span>
+<span class="sd">        The number of neighbors to find</span>
+
+<span class="sd">    maxiteration : int</span>
+<span class="sd">                   When using coupled decomposition, the number of recursive</span>
+<span class="sd">                   divisions to apply.  The total number of resultant</span>
+<span class="sd">                   sub-images will be 4 ** maxiteration.  Approximate values:</span>
+
+<span class="sd">                    | Number of megapixels | maxiteration |</span>
+<span class="sd">                    |----------------------|--------------|</span>
+<span class="sd">                    | m &lt; 10               |1-2|</span>
+<span class="sd">                    | 10 &lt; m &lt; 30          | 3 |</span>
+<span class="sd">                    | 30 &lt; m &lt; 100         | 4 |</span>
+<span class="sd">                    | 100 &lt; m &lt; 1000       | 5 |</span>
+<span class="sd">                    | m &gt; 1000             | 6 |</span>
+
+<span class="sd">    size : int</span>
+<span class="sd">           When using coupled decomposition, the total number of points</span>
+<span class="sd">           to check in each sub-image to try and find a match.</span>
+<span class="sd">           Selection of this number is a balance between seeking a</span>
+<span class="sd">           representative mid-point and computational cost.</span>
+
+<span class="sd">    buf_dist : int</span>
+<span class="sd">               When using coupled decomposition, the distance from the edge of</span>
+<span class="sd">               the (sub)image a point must be in order to be used as a</span>
+<span class="sd">               partioning point.  The smaller the distance, the more likely</span>
+<span class="sd">               percision errors can results in erroneous partitions.</span>
+
+<span class="sd">    ndv : float</span>
+<span class="sd">          The no data value that will be masked when computing the radial</span>
+<span class="sd">          correlation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
+    <span class="n">ddata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
+
+    <span class="n">ssize</span> <span class="o">=</span> <span class="n">sdata</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">dsize</span> <span class="o">=</span> <span class="n">ddata</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">sdata</span><span class="p">[</span><span class="n">sdata</span> <span class="o">==</span> <span class="n">ndv</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">ddata</span><span class="p">[</span><span class="n">ddata</span> <span class="o">==</span> <span class="n">ndv</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="n">matches</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">([</span><span class="s1">&#39;ratio&#39;</span><span class="p">])</span>
+    <span class="n">sidx</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">]</span>
+    <span class="n">didx</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Grab all the available candidate keypoints</span>
+    <span class="n">skp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_keypoints</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
+    <span class="n">dkp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">get_keypoints</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">didx</span><span class="p">]</span>
+
+    <span class="c1"># Set up the membership arrays</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">smembership</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sdata</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dmembership</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ddata</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">smembership</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dmembership</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">pcounter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiteration</span><span class="p">):</span>
+        <span class="n">partitions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smembership</span><span class="p">)</span>
+        <span class="n">npartitions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">partitions</span><span class="p">:</span>
+            <span class="n">sy_part</span><span class="p">,</span> <span class="n">sx_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smembership</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+            <span class="n">dy_part</span><span class="p">,</span> <span class="n">dx_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dmembership</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+
+            <span class="c1"># Get the source extent</span>
+            <span class="n">minsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sy_part</span><span class="p">)</span>
+            <span class="n">maxsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sy_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">minsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sx_part</span><span class="p">)</span>
+            <span class="n">maxsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sx_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Get the destination extent</span>
+            <span class="n">mindy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dy_part</span><span class="p">)</span>
+            <span class="n">maxdy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dy_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">mindx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dx_part</span><span class="p">)</span>
+            <span class="n">maxdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dx_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Clip the sub image from the full images (this is a MBR)</span>
+            <span class="n">asub</span> <span class="o">=</span> <span class="n">sdata</span><span class="p">[</span><span class="n">minsy</span><span class="p">:</span><span class="n">maxsy</span><span class="p">,</span> <span class="n">minsx</span><span class="p">:</span><span class="n">maxsx</span><span class="p">]</span>
+            <span class="n">bsub</span> <span class="o">=</span> <span class="n">ddata</span><span class="p">[</span><span class="n">mindy</span><span class="p">:</span><span class="n">maxdy</span><span class="p">,</span> <span class="n">mindx</span><span class="p">:</span><span class="n">maxdx</span><span class="p">]</span>
+
+            <span class="c1"># Approximate the mid point of the partition as the mean of the matched keypoints</span>
+            <span class="n">sub_skp</span> <span class="o">=</span> <span class="n">skp</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;x &gt;= </span><span class="si">{}</span><span class="s1"> and x &lt;= </span><span class="si">{}</span><span class="s1"> and y &gt;= </span><span class="si">{}</span><span class="s1"> and y &lt;= </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minsx</span><span class="p">,</span> <span class="n">maxsx</span><span class="p">,</span>
+                                                                                 <span class="n">minsy</span><span class="p">,</span> <span class="n">maxsy</span><span class="p">))</span>
+            <span class="n">smx</span><span class="p">,</span> <span class="n">smy</span> <span class="o">=</span> <span class="n">sub_skp</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">smx</span><span class="p">,</span> <span class="n">smy</span><span class="p">]])</span>
+            <span class="n">dists</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">sub_skp</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]])</span>
+
+            <span class="n">closest</span> <span class="o">=</span> <span class="n">sub_skp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dists</span><span class="p">)]</span>
+            <span class="n">closest_idx</span> <span class="o">=</span> <span class="n">closest</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">soriginx</span><span class="p">,</span> <span class="n">soriginy</span> <span class="o">=</span> <span class="n">closest</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]</span>
+
+            <span class="c1"># Grab the corresponding point in the destination</span>
+            <span class="n">dest_idx</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">closest_idx</span><span class="p">][</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">]</span>
+            <span class="n">dest_pt</span> <span class="o">=</span> <span class="n">dkp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dest_idx</span><span class="p">]</span>
+            <span class="n">doriginx</span><span class="p">,</span> <span class="n">doriginy</span> <span class="o">=</span> <span class="n">dest_pt</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Sub image origin is assumed to be 0,0 (local sub-image space), while match point origins are</span>
+            <span class="c1"># in the full image space.  Shift the match point orign to be in the sub-image space if needed</span>
+            <span class="n">soriginx</span> <span class="o">-=</span> <span class="n">minsx</span>
+            <span class="n">soriginy</span> <span class="o">-=</span> <span class="n">minsy</span>
+            <span class="n">doriginx</span> <span class="o">-=</span> <span class="n">mindx</span>
+            <span class="n">doriginy</span> <span class="o">-=</span> <span class="n">mindy</span>
+
+            <span class="c1"># Apply coupled decomposition</span>
+            <span class="n">s_submembership</span><span class="p">,</span> <span class="n">d_submembership</span> <span class="o">=</span> <span class="n">coupled_decomposition</span><span class="p">(</span><span class="n">asub</span><span class="p">,</span> <span class="n">bsub</span><span class="p">,</span>
+                                                                     <span class="n">sorigin</span><span class="o">=</span><span class="p">(</span><span class="n">soriginx</span><span class="p">,</span> <span class="n">soriginy</span><span class="p">),</span>
+                                                                     <span class="n">dorigin</span><span class="o">=</span><span class="p">(</span><span class="n">doriginx</span><span class="p">,</span> <span class="n">doriginy</span><span class="p">))</span>
+
+            <span class="c1"># Shift the returned membership counters to a set of unique numbers</span>
+            <span class="n">s_submembership</span> <span class="o">+=</span> <span class="n">pcounter</span>
+            <span class="n">d_submembership</span> <span class="o">+=</span> <span class="n">pcounter</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">smembership</span><span class="p">[</span><span class="n">minsy</span><span class="p">:</span><span class="n">maxsy</span><span class="p">,</span>
+                        <span class="n">minsx</span><span class="p">:</span><span class="n">maxsx</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_submembership</span>
+
+            <span class="n">sdy</span> <span class="o">=</span> <span class="n">dy_part</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">dy_part</span><span class="p">)</span>
+            <span class="n">sdx</span> <span class="o">=</span> <span class="n">dx_part</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">dx_part</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dmembership</span><span class="p">[</span><span class="n">dy_part</span><span class="p">,</span> <span class="n">dx_part</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_submembership</span><span class="p">[</span><span class="n">sdy</span><span class="p">,</span> <span class="n">sdx</span><span class="p">]</span>
+            <span class="n">pcounter</span> <span class="o">+=</span> <span class="mi">4</span>
+
+
+<span class="k">def</span> <span class="nf">decompose_and_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Now match the decomposed segments to one another</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smembership</span><span class="p">):</span>
+        <span class="n">sy_part</span><span class="p">,</span> <span class="n">sx_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smembership</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">dy_part</span><span class="p">,</span> <span class="n">dx_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dmembership</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+
+        <span class="c1"># Get the source extent</span>
+        <span class="n">minsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sy_part</span><span class="p">)</span>
+        <span class="n">maxsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sy_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">minsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sx_part</span><span class="p">)</span>
+        <span class="n">maxsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sx_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Get the destination extent</span>
+        <span class="n">mindy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dy_part</span><span class="p">)</span>
+        <span class="n">maxdy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dy_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">mindx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dx_part</span><span class="p">)</span>
+        <span class="n">maxdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dx_part</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Get the indices of the candidate keypoints within those regions / variables are pulled before decomp.</span>
+        <span class="n">sidx</span> <span class="o">=</span> <span class="n">skp</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;x &gt;= </span><span class="si">{}</span><span class="s1"> and x &lt;= </span><span class="si">{}</span><span class="s1"> and y &gt;= </span><span class="si">{}</span><span class="s1"> and y &lt;= </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minsx</span><span class="p">,</span> <span class="n">maxsx</span><span class="p">,</span> <span class="n">minsy</span><span class="p">,</span> <span class="n">maxsy</span><span class="p">))</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">didx</span> <span class="o">=</span> <span class="n">dkp</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;x &gt;= </span><span class="si">{}</span><span class="s1"> and x &lt;= </span><span class="si">{}</span><span class="s1"> and y &gt;= </span><span class="si">{}</span><span class="s1"> and y &lt;= </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mindx</span><span class="p">,</span> <span class="n">maxdx</span><span class="p">,</span> <span class="n">mindy</span><span class="p">,</span> <span class="n">maxdy</span><span class="p">))</span><span class="o">.</span><span class="n">index</span>
+        <span class="c1"># If the candidates &lt; k, OpenCV throws an error</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sidx</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">k</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">didx</span><span class="p">)</span> <span class="o">&gt;=</span><span class="n">k</span><span class="p">:</span>
+            <span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aidx</span><span class="o">=</span><span class="n">sidx</span><span class="p">,</span> <span class="n">bidx</span><span class="o">=</span><span class="n">didx</span><span class="p">)</span>
+            <span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aidx</span><span class="o">=</span><span class="n">didx</span><span class="p">,</span> <span class="n">bidx</span><span class="o">=</span><span class="n">sidx</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

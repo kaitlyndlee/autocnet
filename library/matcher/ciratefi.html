@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matcher.ciratefi — RST-BC Invariant template match algorithm &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="matcher.feature — Feature based matching" href="feature.html" />
+    <link rel="prev" title="matcher.subpixel — Performing subpixel registration between images" href="subpixel.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="feature_extractor.html"><code class="docutils literal"><span class="pre">matcher.feature_extractor</span></code> &#8212; Extracting Features from Images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="outlier_detector.html"><code class="docutils literal"><span class="pre">matcher.outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></li>
+<li class="toctree-l5"><a class="reference internal" href="subpixel.html"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="feature.html"><code class="docutils literal"><span class="pre">matcher.feature</span></code> &#8212; Feature based matching</a></li>
+<li class="toctree-l5"><a class="reference internal" href="naive_template.html"><code class="docutils literal"><span class="pre">matcher.naive_template</span></code> &#8212; Simple template matching</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul>
+      <li>Previous: <a href="subpixel.html" title="previous chapter"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+      <li>Next: <a href="feature.html" title="next chapter"><code class="docutils literal"><span class="pre">matcher.feature</span></code> &#8212; Feature based matching</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matcher-ciratefi-rst-bc-invariant-template-match-algorithm">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm<a class="headerlink" href="#matcher-ciratefi-rst-bc-invariant-template-match-algorithm" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">matcher.ciratefi</span></code> module</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.matcher.ciratefi"></span><dl class="function">
+<dt id="autocnet.matcher.ciratefi.cifi">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">cifi</code><span class="sig-paren">(</span><em>template, search_image, thresh=90, use_percentile=True, radii=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], scales=[0.5, 0.57, 0.66, 0.76, 0.87, 1.0], verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#cifi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.cifi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Circular sampling filter (Cifi) uses projections of the template and search
+images on a set of circular rings to detect the first grade candidate pixels
+and the points&#8217; corresponding best fit scales for Ciratefi.</p>
+<p>A set of scales is applied to the template and is radially sampled for each radii
+&#8216;r&#8217; passed in. The template sample is equal to sum of the grayscale values
+divided by 2*pi*r.</p>
+<p>Each pixel in the search image is similarly sampled. Every pixel then gets
+correlated with the template samples at all scales. The scales with the highest
+correlation are the considered the &#8216;best fit scales&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>np.array</em>) &#8211; The input search template used to &#8216;query&#8217; the destination
+image</li>
+<li><strong>search_image</strong> (<em>np.array</em>) &#8211; The image or sub-image to be searched</li>
+<li><strong>thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>use_percentile</strong> (<em>bool</em>) &#8211; If True (default), thresh is a percentile instead of a hard
+strength value</li>
+<li><strong>radii</strong> (<em>np.array</em>) &#8211; The list of radii to use for radial sampling</li>
+<li><strong>scales</strong> (<em>list</em>) &#8211; The list of scales to be applied to the template image, best if
+a geometric series</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Set to True in order to output images and text describing the outputs. Can
+cause a serious decrease in performance. False by default.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fg_candidate_pixels</strong> (<em>ndarray</em>) &#8211; array of pixels that passed the filter in tuples (y,x)</li>
+<li><strong>best_scales</strong> (<em>ndarray</em>) &#8211; parrallel array of best scales for the first grade candidate points</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.ciratefi">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">ciratefi</code><span class="sig-paren">(</span><em>template, search_image, upsampling=1, cifi_thresh=95, rafi_thresh=95, tefi_thresh=100, use_percentile=False, alpha=0.19634954084936207, scales=[0.5, 0.57, 0.66, 0.76, 0.87, 1.0], radii=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#ciratefi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.ciratefi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>ndarray</em>) &#8211; The input search template used to &#8216;query&#8217; the destination
+image</li>
+<li><strong>search_image</strong> (<em>ndarray</em>) &#8211; The image or sub-image to be searched</li>
+<li><strong>upsampling</strong> (<em>int</em>) &#8211; upsample degree</li>
+<li><strong>cifi_thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold for cifi above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>rafi_thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold for rafi above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>tefi_thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold for tefi above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>use_percentile</strong> (<em>bool</em>) &#8211; If True (default), thresh is a percentile instead of a hard
+strength value</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; Must be greater than 0, if alpha is greater than 2*pi, it is reduced to it&#8217;s
+equivalent angle in [0,2*pi]. alpha list = np.arange(0, 2*pi, alpha)</li>
+<li><strong>radii</strong> (<em>np.array</em>) &#8211; The list of radii to use for radial sampling</li>
+<li><strong>scales</strong> (<em>list</em>) &#8211; The list of scales to be applied to the template image, best if
+a geometric series</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Set to True in order to output images and text describing the outputs. Can
+cause a serious decrease in performance. False by default.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> &#8211; array of pixel in (y, x)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.circ_mask">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">circ_mask</code><span class="sig-paren">(</span><em>shape</em>, <em>center</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#circ_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.circ_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a circular mask</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>tuple</em>) &#8211; tuple decribing the desired mask shape in
+(y,x)</li>
+<li><strong>center</strong> (<em>tuple</em>) &#8211; tuple describing the desired center
+for the circle</li>
+<li><strong>radius</strong> (<em>float</em>) &#8211; radius of circlular mask</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mask</strong> &#8211; circular mask of bools</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.radial_line_mask">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">radial_line_mask</code><span class="sig-paren">(</span><em>shape</em>, <em>center</em>, <em>radius</em>, <em>alpha=0.19460421</em>, <em>atol=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#radial_line_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.radial_line_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a linear mask from center at angle alpha.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>tuple</em>) &#8211; tuple decribing the desired mask shape in
+(y,x)</li>
+<li><strong>center</strong> (<em>tuple</em>) &#8211; tuple describing the desired center
+for the circle</li>
+<li><strong>radius</strong> (<em>float</em>) &#8211; radius of the line mask</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; angle for the line mask</li>
+<li><strong>atol</strong> (<em>float</em>) &#8211; absolute tolerance for alpha, the higher
+the tolerance, the wider the angle bandwidth</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mask</strong> &#8211; linear mask of bools</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.rafi">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">rafi</code><span class="sig-paren">(</span><em>template, search_image, candidate_pixels, best_scales, thresh=95, use_percentile=True, alpha=0.39269908169872414, radii=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#rafi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.rafi" title="Permalink to this definition">¶</a></dt>
+<dd><p>The seconds filter in Ciratefi, the Radial Sampling Filter (Rafi), uses
+projections of the template image and the search image on a set of radial
+lines to upgrade the first grade the candidate pixels from cefi to
+seconds grade candidate pixels along with there corresponding best
+fit rotation.</p>
+<p>The template image is radially sampled at angles 0-2*pi at steps alpha and
+with the best fit radius (largest sampling radius from radii list that fits
+in the template image)</p>
+<p>Sampling for each line equals the sum of the greyscales divided by the
+best fit radius.</p>
+<p>The search image is similarly sampled at each candidate pixel and is correlated
+with the radial samples on the template. The best fit angle is the angle that
+maximizes this correlation, and the second grade candidate pixels are determined
+by the strength of the correlation and the passed threshold</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>np.array</em>) &#8211; The input search template used to &#8216;query&#8217; the destination
+image</li>
+<li><strong>search_image</strong> (<em>np.array</em>) &#8211; The image or sub-image to be searched</li>
+<li><strong>candidate_pixels</strong> (<em>np.array</em>) &#8211; array of candidate pixels in tuples (y,x), best if
+the pixel are the output of Cifi</li>
+<li><strong>best_scales</strong> (<em>ndarray</em>) &#8211; The list of best fit scales for each candidate point,
+the length should equal the length of the candidate point
+list</li>
+<li><strong>thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>use_percentile</strong> (<em>bool</em>) &#8211; If True (default), thresh is a percentile instead of a hard
+strength value</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; Must be greater than 0, if alpha is greater than 2*pi, it is reduced to it&#8217;s
+equivalent angle in [0,2*pi]. alpha list = np.arange(0, 2*pi, alpha)</li>
+<li><strong>radii</strong> (<em>list</em>) &#8211; The list of radii to use for radial sampling, best if the list
+is the same as the one used for Cifi</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Set to True in order to output images and text describing the outputs. Can
+cause a serious decrease in performance. False by default.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>sg_candidate_points</strong> (<em>ndarray</em>)</li>
+<li><strong>best_rotation</strong> (<em>ndarray</em>) &#8211; Parrallel array of the best fit rotations for each
+second grade candidate pixel</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.tefi">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">tefi</code><span class="sig-paren">(</span><em>template, search_image, candidate_pixels, best_scales, best_angles, scales=[0.5, 0.57, 0.66, 0.76, 0.87, 1.0], upsampling=1, thresh=100, alpha=0.19634954084936207, use_percentile=True, verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#tefi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.tefi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Template Matching Filter (Tefi) is the third and final filter for ciratefi.</p>
+<p>For every candidate pixel, tefi rotates and scales the template image by the list
+of scales and angles passed in (which, ideally are the output from cefi and rafi
+respectively) and performs template match around the candidate pixels at the
+approriate scale and rotation angle. Here, the scales, angles and candidate
+points should be a parrallel array structure.</p>
+<p>Any points with correlation strength over the threshold are returned as
+the the strongest candidates for the image location. If knows the point
+exists in one location, thresh should be 100 and use_percentile = True.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>ndarray</em>) &#8211; The input search template used to &#8216;query&#8217; the destination
+image</li>
+<li><strong>image</strong> (<em>ndarray</em>) &#8211; The image or sub-image to be searched</li>
+<li><strong>candidate_pixels</strong> (<em>ndarray</em>) &#8211; array of candidate pixels in tuples (y,x), best if
+the pixel are the output of Cifi</li>
+<li><strong>best_scales</strong> (<em>ndarray</em>) &#8211; The list of best fit scales for each candidate point, the length
+should equal the length of the candidate point list</li>
+<li><strong>best_angles</strong> (<em>ndarray</em>) &#8211; The list of best fit rotation for each candidate point in radians,
+the length should equal the length of the candidate point list</li>
+<li><strong>upsampling</strong> (<em>int</em>) &#8211; upsample degree</li>
+<li><strong>thresh</strong> (<em>float</em>) &#8211; The correlation thresh hold above which a point will
+be a first grade candidate point. If use_percentile=True
+this will act as a percentile, for example, passing 90 means
+keep values in the top 90th percentile</li>
+<li><strong>use_percentile</strong> (<em>bool</em>) &#8211; If True (default), thresh is a percentile instead of a hard
+strength value</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; A float between 0 &amp; 2*pi, alpha list = np.arange(0, 2*pi, alpha)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Set to True in order to output images and text describing the outputs. Can
+cause a serious decrease in performance. False by default.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> &#8211; array of pixel tuples (y,x) which over the threshold</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.ciratefi.to_polar_coord">
+<code class="descclassname">autocnet.matcher.ciratefi.</code><code class="descname">to_polar_coord</code><span class="sig-paren">(</span><em>shape</em>, <em>center</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/ciratefi.html#to_polar_coord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.ciratefi.to_polar_coord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a polar coordinate grid from a shape given
+a center.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>tuple</em>) &#8211; tuple decribing the desired shape in
+(y,x)</li>
+<li><strong>center</strong> (<em>tuple</em>) &#8211; tuple describing the desired center
+for the grid</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>r2</strong> (<em>ndarray</em>) &#8211; grid of radii from the center</li>
+<li><strong>theta</strong> (<em>ndarray</em>) &#8211; grid of angles from the center</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/matcher/ciratefi.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

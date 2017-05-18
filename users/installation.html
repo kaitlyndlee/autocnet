@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Install AutoCNet &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting Started with AutoCNet" href="tutorials/index.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">What is AutoCNet?</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installing AutoCNet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-and-setup">Download and setup:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-autocnet">Installing AutoCnet:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html">Getting Started with AutoCNet</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">User Guide</a><ul>
+      <li>Previous: <a href="introduction.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="tutorials/index.html" title="next chapter">Getting Started with AutoCNet</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="install-autocnet">
+<span id="installation"></span><h1>Install AutoCNet<a class="headerlink" href="#install-autocnet" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="download-and-setup">
+<h2>Download and setup:<a class="headerlink" href="#download-and-setup" title="Permalink to this headline">¶</a></h2>
+<p>(<strong>While these steps are not necessary, it is highly recommended that you follow them.</strong>)</p>
+<p>Begin by accessing the Anaconda download website at:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>.</li>
+</ul>
+<p>Choose the appropriate version for your system, this will be the linux version if you are on Fedora. Next, follow the instructions on Anacondas website for installation onto your system.</p>
+<p>After the installer has finished, it will ask to prepend the path to your .bashrc file. You&#8217;ll want to say yes as this is necessary for the rest of the installation process.
+If you don&#8217;t you will need to access your .bashrc file and add:</p>
+<ul class="simple">
+<li>export PATH=&#8221;(path to anaconda file)/anaconda3/bin:$PATH&#8221;</li>
+</ul>
+<p>Replacing the (path to anaconda) with the appropriate directory sequence that points to the anaconda3 file.</p>
+<p>Next, create and activate a new conda environment using these commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$conda create --name enter environment name
+$source activate environment name
+</pre></div>
+</div>
+<p>After that finishes you&#8217;ll have the base setup for a new Anaconda environment that can contain AutoCnet.</p>
+</div>
+<div class="section" id="installing-autocnet">
+<h2>Installing AutoCnet:<a class="headerlink" href="#installing-autocnet" title="Permalink to this headline">¶</a></h2>
+<p>To start enter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ placeholder command
+</pre></div>
+</div>
+<p>This command accesses a binstar that holds the Autocnet package along with all of the other packages that AutoCnet uses.</p>
+<p>When it finishes downloading, you have installed AutoCnet and setup your anaconda environment.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/users/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

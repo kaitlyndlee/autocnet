@@ -1,0 +1,841 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Advanced: Extending the Control Network &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Library Reference" href="../../../library/index.html" />
+    <link rel="prev" title="Creating a Control Network" href="9. Creating a Control Network.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../introduction.html">What is AutoCNet?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html">Installing AutoCNet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Getting Started with AutoCNet</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2. Extracting Keypoints (Interest Points).html"> Extracting Keypoints (Interest Points)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3. Matching.html"> Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4. Fundamental Matrix.html"> Fundamental Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7. Saving and Loading.html"> Saving and Loadin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9. Creating a Control Network.html"> Creating a Control Network</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"> Advanced: Extending the CandidateGraph</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#The-CandidateGraph">The CandidateGraph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Extraction">Extraction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Why-do-this?">Why do this?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Matching">Matching</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Masks">Masks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#More-Masks">More Masks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#More-built-ins">More built-ins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">User Guide</a><ul>
+  <li><a href="../index.html">Getting Started with AutoCNet</a><ul>
+      <li>Previous: <a href="9. Creating a Control Network.html" title="previous chapter">Creating a Control Network</a></li>
+      <li>Next: <a href="../../../library/index.html" title="next chapter">Library Reference</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="section" id="Advanced:-Extending-the-Control-Network">
+<h1>Advanced: Extending the Control Network<a class="headerlink" href="#Advanced:-Extending-the-Control-Network" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;/data/autocnet&#39;</span><span class="p">))</span>
+
+<span class="kn">import</span> <span class="nn">autocnet</span>
+<span class="c1"># Enable the GPU</span>
+<span class="n">autocnet</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">enable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">autocnet</span> <span class="k">import</span> <span class="n">CandidateGraph</span>
+
+<span class="c1"># The GPU based extraction library that contains SIFT extraction and matching</span>
+<span class="kn">import</span> <span class="nn">cudasift</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="c1"># A method to resize the images on the fly.</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">imresize</span>
+
+<span class="o">%</span><span class="k">pylab</span> inline
+<span class="n">figsize</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating the interactive namespace from numpy and matplotlib
+</pre></div></div>
+</div>
+<div class="section" id="The-CandidateGraph">
+<h2>The CandidateGraph<a class="headerlink" href="#The-CandidateGraph" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>Up until this point, the syntax sugar on the candidate graph has not</div></blockquote>
+<p>been being used. This is because it was necessary to play around with
+the data and explore some constraints on the matching process. The
+candidate graph is easier to utilize for the non-developer as the
+matching process can be distilled down into a single call. This notebook
+illustrates how to take the previously explored constraints and add a
+custom processing method to the graph that can then be applied to any
+number of nodes and edges.</p>
+<p>Basically, we are going for some Voltron extensibility.</p>
+<p>The first step is what we have been doing all along, create the
+CandidateGraph. Then we have to define a function that is going to do
+the processing.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Create the candidate graph and enable a GPU</span>
+<span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;AS15-P-0111_CENTER_LRG_CROPPED.png&#39;</span>
+<span class="n">b</span> <span class="o">=</span> <span class="s1">&#39;AS15-P-0112_CENTER_LRG_CROPPED.png&#39;</span>
+
+<span class="n">adj</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:[</span><span class="n">b</span><span class="p">],</span>
+       <span class="n">b</span><span class="p">:[</span><span class="n">a</span><span class="p">]}</span>
+
+<span class="n">cg</span> <span class="o">=</span> <span class="n">CandidateGraph</span><span class="o">.</span><span class="n">from_adjacency</span><span class="p">(</span><span class="n">adj</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Extraction">
+<h2>Extraction<a class="headerlink" href="#Extraction" title="Permalink to this headline">¶</a></h2>
+<p>Extraction is a function of an individual image. For this reason,
+extraction is a method of a node within the candidate graph. We can
+<a class="reference external" href="https://en.wikipedia.org/wiki/Monkey_patch">monkey patch</a> the custom
+method onto the node for easy access by a user.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Define a function to do the feature extraction.</span>
+
+<span class="k">def</span> <span class="nf">extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">downsample_amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">total_size</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">downsample_amount</span><span class="p">:</span>
+        <span class="n">downsample_amount</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">total_size</span> <span class="o">/</span> <span class="mi">12500</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">downsample_amount</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">downsample_amount</span><span class="p">))</span>
+    <span class="c1"># Downsample</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">imresize</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="s1">&#39;lanczos&#39;</span><span class="p">)</span>
+
+    <span class="n">npts</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.5</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PySiftData</span><span class="p">(</span><span class="n">npts</span><span class="p">)</span>
+    <span class="n">cs</span><span class="o">.</span><span class="n">ExtractKeypoints</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">to_data_frame</span><span class="p">()</span>
+    <span class="n">kp</span> <span class="o">=</span> <span class="n">kp</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;sharpness&#39;</span><span class="p">,</span> <span class="s1">&#39;edgeness&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;ambiguity&#39;</span><span class="p">]]</span>
+    <span class="n">kp</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">kp</span><span class="p">[</span><span class="s1">&#39;ambiguity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Match the interface defined in the edge.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">keypoints</span> <span class="o">=</span> <span class="n">kp</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">descriptors</span> <span class="o">=</span> <span class="n">des</span>
+
+    <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;downsample_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downsample_amount</span>
+
+<span class="c1"># Import the class and update it.  This updates the current instance of the CandidateGraph</span>
+<span class="kn">from</span> <span class="nn">autocnet.graph.node</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="n">Node</span><span class="o">.</span><span class="n">extract_features</span> <span class="o">=</span> <span class="n">extract_features</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Now use the custom method on all nodes in the graph</span>
+
+</pre></div>
+</div>
+</div>
+<p>Now inspect the nodes to confirm that the custom extraction has worked.
+The above code added a new attribute to the nodes
+(<code class="docutils literal"><span class="pre">downsample_amount</span></code>) into the attribute dictionary. Below, all of the
+nodes in the graph are being iterated over. An arbitraty counter, the
+downsample amount and the first three keypoints are all being
+identified.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">cg</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1"># Iterate over the nodes</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;downsample_amount&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">keypoints</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0 5
+0              x           y      scale  sharpness  edgeness  orientation  \
+0  1774.598022  121.213448  18.561510   1.201419  4.345379   246.957138
+1  9224.547852   27.631443  17.625086   6.080946  7.071729   271.284637
+2  9599.548828   28.775124  18.266846   5.637305  7.289649   269.853271
+
+   score  ambiguity
+0    0.0        0.0
+1    0.0        0.0
+2    0.0        0.0
+1 5
+1              x           y      scale  sharpness  edgeness  orientation  \
+0  7368.450684   29.992844  22.463808   4.583405  8.915862   270.224182
+1  1236.768066  198.876312  23.577526  -1.066924  4.799350   358.493378
+2  7693.954590   30.541229  21.110060   3.312886  9.297206   270.888702
+
+   score  ambiguity
+0    0.0        0.0
+1    0.0        0.0
+2    0.0        0.0
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Why-do-this?">
+<h2>Why do this?<a class="headerlink" href="#Why-do-this?" title="Permalink to this headline">¶</a></h2>
+<p>The above example demonstrates how to take the exploratory analysis that
+occurred in previous notebooks and aggregate it into the CandidateGraph.
+Making the assumption that the CandidateGraph is both the data model and
+controller (so a combined Model-Controller), it is then possible to
+create views (the user side application if you will) seamlessly.</p>
+<p>The key requirement is that the minimal interface defined by the
+CandidateGraph be adhered to.</p>
+<p>Below, the graph plotting functionality is used - without having to do
+anything custom. The graph is acting exactly how we would expect it to.
+The difference is that we have injected the logic to work on downsampled
+images. Everything else is super vanilla.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">cg</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="n">cg</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;downsample_amount&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f1f145fb358&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_10_1.png" src="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_10_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Matching">
+<h2>Matching<a class="headerlink" href="#Matching" title="Permalink to this headline">¶</a></h2>
+<p>The next processing step that will require the image array data is
+subpixel matching. Therefore, it is possible to continue to use the
+standard API calls to perform matching.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Apply matching on all edges</span>
+<span class="n">cg</span><span class="o">.</span><span class="n">match</span><span class="p">()</span>
+
+<span class="c1"># Check the output</span>
+<span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>source_image</th>
+      <th>source_idx</th>
+      <th>destination_image</th>
+      <th>destination_idx</th>
+      <th>score</th>
+      <th>ambiguity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>32</td>
+      <td>0.807713</td>
+      <td>0.927260</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>13</td>
+      <td>0.986384</td>
+      <td>0.997687</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>36</td>
+      <td>0.989343</td>
+      <td>0.998851</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>276</td>
+      <td>0.952884</td>
+      <td>0.893658</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>102</td>
+      <td>0.847034</td>
+      <td>0.981977</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Masks">
+<h2>Masks<a class="headerlink" href="#Masks" title="Permalink to this headline">¶</a></h2>
+<p>AutoCNet uses the concept of masks to winnow the possible matches. The
+general concept is that all extracted keypoints and matches are of
+value, whether they are considered to be noise or valid data points. The
+decision as to which correspondences are good is also subject to change
+based on any number of factors (the user decides to accept more error in
+some region where a correspondence is absolutely required, the density
+in some region is too high and so valid correspondences are to be
+ignored, etc.).</p>
+<p>Every edge carries a <code class="docutils literal"><span class="pre">masks</span></code> DataFrame that contains boolean columns
+to identify which correspondences are valid. In the below example, the
+<code class="docutils literal"><span class="pre">ambiguity</span></code> metric from the CUDA matching process is being stored as
+the <code class="docutils literal"><span class="pre">ratio</span></code> column. Below, that mask will be updated based on the
+distribution of the data and the score mask will be added.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">masks</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Iterate over all of the edges in the graph and update the mask attribute based on the distribution of ambiguity and score</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="n">cg</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">masks</span><span class="p">[</span><span class="s1">&#39;ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">ambiguity</span> <span class="o">&lt;=</span> <span class="n">e</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">ambiguity</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.015</span><span class="p">)</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">masks</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">e</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">masks</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ratio</th>
+      <th>score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="More-Masks">
+<h2>More Masks<a class="headerlink" href="#More-Masks" title="Permalink to this headline">¶</a></h2>
+<p>Here we plot some results using the <code class="docutils literal"><span class="pre">clean_keys</span></code> argument. This
+argument is used throughout the AutoCNet library to indicate which masks
+should be applied to the data before processing. In the example below if
+either the <code class="docutils literal"><span class="pre">ratio</span></code> or <code class="docutils literal"><span class="pre">score</span></code> are False, the correspondence is
+omitted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">clean_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">],</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">line_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.25</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f1e9839a208&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_17_1.png" src="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_17_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="More-built-ins">
+<h2>More built-ins<a class="headerlink" href="#More-built-ins" title="Permalink to this headline">¶</a></h2>
+<p>In previous examples, the individual notebook cells were making calls
+for computation of the fundamental matrix. Since the custom extractor
+was patched in, it is possible to just use the syntax sugar calls on the
+CandidateGraph object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Compute the fundamental matrix for all edges</span>
+<span class="n">cg</span><span class="o">.</span><span class="n">compute_fundamental_matrices</span><span class="p">(</span><span class="n">clean_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+<span class="c1"># Confirm that a new mask has been added</span>
+<span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">masks</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ratio</th>
+      <th>score</th>
+      <th>fundamental</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">cg</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">clean_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fundamental&#39;</span><span class="p">],</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">line_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.25</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[16]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f1e98043c18&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_20_1.png" src="../../../_images/users_tutorials_apollopan_Advanced_1._Extending_the_CandidateGraph_20_1.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../../_sources/users/tutorials/apollopan/Advanced 1. Extending the CandidateGraph.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matcher.naive_template — Simple template matching &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="transformation — Transformation Objects" href="../transformation/index.html" />
+    <link rel="prev" title="matcher.feature — Feature based matching" href="feature.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="feature_extractor.html"><code class="docutils literal"><span class="pre">matcher.feature_extractor</span></code> &#8212; Extracting Features from Images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="outlier_detector.html"><code class="docutils literal"><span class="pre">matcher.outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></li>
+<li class="toctree-l5"><a class="reference internal" href="subpixel.html"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ciratefi.html"><code class="docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="feature.html"><code class="docutils literal"><span class="pre">matcher.feature</span></code> &#8212; Feature based matching</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">matcher.naive_template</span></code> &#8212; Simple template matching</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul>
+      <li>Previous: <a href="feature.html" title="previous chapter"><code class="docutils literal"><span class="pre">matcher.feature</span></code> &#8212; Feature based matching</a></li>
+      <li>Next: <a href="../transformation/index.html" title="next chapter"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matcher-naive-template-simple-template-matching">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">matcher.naive_template</span></code> &#8212; Simple template matching<a class="headerlink" href="#matcher-naive-template-simple-template-matching" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">matcher.naive_template</span></code> module</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.matcher.naive_template"></span><dl class="function">
+<dt id="autocnet.matcher.naive_template.pattern_match">
+<code class="descclassname">autocnet.matcher.naive_template.</code><code class="descname">pattern_match</code><span class="sig-paren">(</span><em>template</em>, <em>image</em>, <em>upsampling=16</em>, <em>func=5</em>, <em>error_check=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/naive_template.html#pattern_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.naive_template.pattern_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call an arbitrary pattern matcher</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>ndarray</em>) &#8211; The input search template used to &#8216;query&#8217; the destination
+image</li>
+<li><strong>image</strong> (<em>ndarray</em>) &#8211; The image or sub-image to be searched</li>
+<li><strong>upsampling</strong> (<em>int</em>) &#8211; The multiplier to upsample the template and image.</li>
+<li><strong>func</strong> (<em>object</em>) &#8211; The function to be used to perform the template based matching
+Options: {cv2.TM_CCORR_NORMED, cv2.TM_CCOEFF_NORMED, cv2.TM_SQDIFF_NORMED}
+In testing the first two options perform significantly better with Apollo data.</li>
+<li><strong>error_check</strong> (<em>bool</em>) &#8211; If True, also apply a different matcher and test that the values
+are not too divergent.  Default, False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x</strong> (<em>float</em>) &#8211; The x offset</li>
+<li><strong>y</strong> (<em>float</em>) &#8211; The y offset</li>
+<li><strong>strength</strong> (<em>float</em>) &#8211; The strength of the correlation in the range [-1, 1].</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/matcher/naive_template.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

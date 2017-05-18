@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matcher.outlier_detector — Finding outliers in both the keypoints and the matches &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="matcher.subpixel — Performing subpixel registration between images" href="subpixel.html" />
+    <link rel="prev" title="matcher.feature_extractor — Extracting Features from Images" href="feature_extractor.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="feature_extractor.html"><code class="docutils literal"><span class="pre">matcher.feature_extractor</span></code> &#8212; Extracting Features from Images</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">matcher.outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></li>
+<li class="toctree-l5"><a class="reference internal" href="subpixel.html"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ciratefi.html"><code class="docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="feature.html"><code class="docutils literal"><span class="pre">matcher.feature</span></code> &#8212; Feature based matching</a></li>
+<li class="toctree-l5"><a class="reference internal" href="naive_template.html"><code class="docutils literal"><span class="pre">matcher.naive_template</span></code> &#8212; Simple template matching</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul>
+      <li>Previous: <a href="feature_extractor.html" title="previous chapter"><code class="docutils literal"><span class="pre">matcher.feature_extractor</span></code> &#8212; Extracting Features from Images</a></li>
+      <li>Next: <a href="subpixel.html" title="next chapter"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matcher-outlier-detector-finding-outliers-in-both-the-keypoints-and-the-matches">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">matcher.outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches<a class="headerlink" href="#matcher-outlier-detector-finding-outliers-in-both-the-keypoints-and-the-matches" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">matcher.outlier_detector</span></code> module</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.matcher.outlier_detector"></span><dl class="function">
+<dt id="autocnet.matcher.outlier_detector.distance_ratio">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">distance_ratio</code><span class="sig-paren">(</span><em>matches</em>, <em>ratio=0.8</em>, <em>single=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/outlier_detector.html#distance_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.outlier_detector.distance_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return a mask for a matches dataframe
+using Lowe&#8217;s ratio test.  If keypoints have a single
+Lowe (2004) <a class="reference internal" href="../../references.html#lowe2004" id="id1">[Lowe2004]</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ratio</strong> (<em>float</em>) &#8211; the ratio between the first and second-best match distances
+for each keypoint to use as a bound for marking the first keypoint
+as &#8220;good&#8221;. Default: 0.8</li>
+<li><strong>single</strong> (<em>bool</em>) &#8211; If True, points with only a single entry are included (True)
+in the result mask, else False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mask</strong> &#8211; A Pandas DataFrame mask for the matches with those failing the
+ratio test set to False.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.outlier_detector.mirroring_test">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">mirroring_test</code><span class="sig-paren">(</span><em>matches</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/outlier_detector.html#mirroring_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.outlier_detector.mirroring_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and return a mask for the matches dataframe on each edge of the graph which
+will keep only entries in which there is both a source -&gt; destination match and a destination -&gt;
+source match.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matches</strong> (<em>dataframe</em>) &#8211; the matches dataframe stored along the edge of the graph
+containing matched points with columns containing:
+matched image name, query index, train index, and
+descriptor distance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>duplicates</strong> &#8211; Intended to mask the matches dataframe. Rows are True if the associated keypoint passes
+the mirroring test and false otherwise. That is, if 1-&gt;2, 2-&gt;1, both rows will be True,
+otherwise, they will be false. Keypoints with only one match will be False. Removes
+duplicate rows.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dataseries</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.outlier_detector.self_neighbors">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">self_neighbors</code><span class="sig-paren">(</span><em>matches</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/outlier_detector.html#self_neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.outlier_detector.self_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas data series intended to be used as a mask. Each row
+is True if it is not matched to a point in the same image (good) and
+False if it is (bad.)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matches</strong> (<em>dataframe</em>) &#8211; the matches dataframe stored along the edge of the graph
+containing matched points with columns containing:
+matched image name, query index, train index, and
+descriptor distance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Intended to mask the matches dataframe. True means the row is not matched to a point in the same image
+and false the row is.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dataseries</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.outlier_detector.spatial_suppression">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">spatial_suppression</code><span class="sig-paren">(</span><em>df</em>, <em>domain</em>, <em>min_radius=1.5</em>, <em>k=250</em>, <em>error_k=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/outlier_detector.html#spatial_suppression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.outlier_detector.spatial_suppression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spatial suppression using disc based method.</p>
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.df">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">df</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.df" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dataframe</em> &#8211; Input dataframe used for suppressing</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.mask">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">mask</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>series</em> &#8211; pandas boolean series</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.max_radius">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">max_radius</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.max_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Maximum allowable point radius</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.min_radius">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">min_radius</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.min_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The smallest allowable radius size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.nvalid">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">nvalid</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.nvalid" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of valid points after suppression</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.k">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">k</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.k" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of points to be saved</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.error_k">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">error_k</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.error_k" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; [0,1] the acceptable error in k</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.outlier_detector.domain">
+<code class="descclassname">autocnet.matcher.outlier_detector.</code><code class="descname">domain</code><a class="headerlink" href="#autocnet.matcher.outlier_detector.domain" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> &#8211; The (x,y) extent of the input domain</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>mask</strong> (<em>pd.Series</em>) &#8211; Boolean suppression mask</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The number of unsuppressed observations</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="../../references.html#gauglitz2011" id="id2">[Gauglitz2011]</a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/matcher/outlier_detector.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

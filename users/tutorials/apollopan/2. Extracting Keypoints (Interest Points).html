@@ -1,0 +1,626 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extracting Keypoints (Interest Points) &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Matching" href="3. Matching.html" />
+    <link rel="prev" title="Creating the CandidateGraph Object" href="1. Creating the CandidateGraph Object.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../introduction.html">What is AutoCNet?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html">Installing AutoCNet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Getting Started with AutoCNet</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"> Extracting Keypoints (Interest Points)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Candidate-Graph">Candidate Graph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Enable-GPU-use">Enable GPU use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Aside:-AutoCNet-as-a-library">Aside: AutoCNet as a library</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#Modules:">Modules:</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#Images-that-are-too-large">Images that are too large</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Parameterization-&amp;-Result-Visualization">Parameterization &amp; Result Visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Repeat-for-the-other-array">Repeat for the other array</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="3. Matching.html"> Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4. Fundamental Matrix.html"> Fundamental Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7. Saving and Loading.html"> Saving and Loadin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9. Creating a Control Network.html"> Creating a Control Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Advanced 1. Extending the CandidateGraph.html"> Advanced: Extending the CandidateGraph</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">User Guide</a><ul>
+  <li><a href="../index.html">Getting Started with AutoCNet</a><ul>
+      <li>Previous: <a href="1. Creating the CandidateGraph Object.html" title="previous chapter">Creating the CandidateGraph Object</a></li>
+      <li>Next: <a href="3. Matching.html" title="next chapter">Matching</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="section" id="Extracting-Keypoints-(Interest-Points)">
+<h1>Extracting Keypoints (Interest Points)<a class="headerlink" href="#Extracting-Keypoints-(Interest-Points)" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;/data/autocnet&#39;</span><span class="p">))</span>
+
+<span class="kn">import</span> <span class="nn">autocnet</span>
+<span class="kn">from</span> <span class="nn">autocnet</span> <span class="k">import</span> <span class="n">CandidateGraph</span>
+
+<span class="c1"># The GPU based extraction library that contains SIFT extraction and matching</span>
+<span class="kn">import</span> <span class="nn">cudasift</span> <span class="k">as</span> <span class="nn">cs</span>
+
+<span class="c1"># A method to resize the images on the fly.</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">imresize</span>
+
+<span class="o">%</span><span class="k">pylab</span> inline
+<span class="n">figsize</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating the interactive namespace from numpy and matplotlib
+</pre></div></div>
+</div>
+<div class="section" id="Candidate-Graph">
+<h2>Candidate Graph<a class="headerlink" href="#Candidate-Graph" title="Permalink to this headline">¶</a></h2>
+<p>As before, create the candidate graph object that stores the adjacency
+between images.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;AS15-P-0111_CENTER_LRG_CROPPED.png&#39;</span>
+<span class="n">b</span> <span class="o">=</span> <span class="s1">&#39;AS15-P-0112_CENTER_LRG_CROPPED.png&#39;</span>
+
+<span class="n">adj</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:[</span><span class="n">b</span><span class="p">],</span>
+       <span class="n">b</span><span class="p">:[</span><span class="n">a</span><span class="p">]}</span>
+
+<span class="n">cg</span> <span class="o">=</span> <span class="n">CandidateGraph</span><span class="o">.</span><span class="n">from_adjacency</span><span class="p">(</span><span class="n">adj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Enable-GPU-use">
+<h2>Enable GPU use<a class="headerlink" href="#Enable-GPU-use" title="Permalink to this headline">¶</a></h2>
+<p>The library can utilize either the CPU or the GPU for a number of
+computationally expensive functions. One example if <a class="reference external" href="https://en.wikipedia.org/wiki/Correspondence_problem">keypoint or
+correspondence
+identification</a>.
+The process of finding correspondences requires 3 steps:</p>
+<ul class="simple">
+<li>The identification of <a class="reference external" href="https://en.wikipedia.org/wiki/Interest_point_detection">interest
+points</a>.</li>
+<li>The extraction of said interest points</li>
+<li>Matching of interest points between images to identify
+correspondences.</li>
+</ul>
+<p>We support this processing flow using:</p>
+<ul class="simple">
+<li>(OpenCV
+functionality)[<a class="reference external" href="http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_table_of_contents_feature2d/py_table_of_contents_feature2d.html">http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_table_of_contents_feature2d/py_table_of_contents_feature2d.html</a>]</li>
+<li>(VLFeat)[<a class="reference external" href="http://www.vlfeat.org">http://www.vlfeat.org</a>]</li>
+<li>(CUDA SIFT)[<a class="reference external" href="https://github.com/USGS-Astrogeology/CudaSift">https://github.com/USGS-Astrogeology/CudaSift</a>]</li>
+</ul>
+<p>CUDA SIFT is exceptionally fast as it extracts (and matches) keypoints
+in parallel on 1000s of GPU cores. For all but the smallest images, GPU
+use is encouraged.</p>
+<div class="figure" id="id1">
+<img alt="gpu" src="https://upload.wikimedia.org/wikipedia/commons/b/bd/CPU_and_GPU.png" />
+<p class="caption"><span class="caption-text">gpu</span></p>
+</div>
+<p>In house, my work station is available with 2 M5000 GPUs containing
+approximately 2500 GPU cores and 8GB of RAM each. The GPU processing
+node has 4 K80 GPUs with ~5000 GPU cores and 12GB of RAM each.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">autocnet</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">enable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Explicitly select a GPU since the system has 2 and GPU1 is running monitors.</span>
+</pre></div>
+</div>
+</div>
+<p>A GPU with 8GB of memory can run the SIFT algorithm for approximately
+ pixels. The CudaSift code is written to support 32-bit
+floating point numbers (a major improvement over OpenCV for our use
+case). This is also a limiting factor as the 8-bit Apollo Pan <code class="docutils literal"><span class="pre">.png</span></code>
+files are taking up significantly more space than they really need.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># check the total size of the input image.</span>
+<span class="n">cg</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">raster_size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(59720, 11510)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Aside:-AutoCNet-as-a-library">
+<h2>Aside: AutoCNet as a library<a class="headerlink" href="#Aside:-AutoCNet-as-a-library" title="Permalink to this headline">¶</a></h2>
+<p>We have developed the AutoCNet library and not an end-to-end application
+intentionally. The Apollo Pan data is a prime example of why this
+decision was made. The images are unique and the order and
+pre-processing required for successful matching require chaining the
+AutoCNet functionality in a unique way. The &#8220;application&#8221; can be
+taylored to the data as opposed to expanding the application to support
+all possible processing paths.</p>
+<div class="figure" id="id2">
+<img alt="autolib" src="https://github.com/USGS-Astrogeology/autocnet/blob/dev/docs/_static/images/autocnet_modules.png?raw=true" />
+<p class="caption"><span class="caption-text">autolib</span></p>
+</div>
+<div class="section" id="Modules:">
+<h3>Modules:<a class="headerlink" href="#Modules:" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">graph</span></code>: This module manages the CandidateGraph, Node, and Edge
+constructs. All of the syntax sugar is embedded in these objects.</li>
+<li><code class="docutils literal"><span class="pre">matcher</span></code>: The meat-and-potatoes module with our CPU/GPU feature
+matchers, subpixel matchers, outlier detection methods, and spatial
+suppression functions.</li>
+<li><code class="docutils literal"><span class="pre">camera</span></code>: Lightweight pinhole camera capabilities for working with
+epipolar lines, estimating the relationship between an ideal pinhole
+and non-ideal pinhole using image correspondences, and triangulation.</li>
+<li><code class="docutils literal"><span class="pre">transformation</span></code>: Decomposition and transformation (fundamental and
+homography) matrices.</li>
+<li><code class="docutils literal"><span class="pre">control</span></code>: ISIS3 style control class (not broadly used).</li>
+<li><code class="docutils literal"><span class="pre">cg</span></code>: Computational Geometry module with convex hull and Voronoi
+diagram functionality.</li>
+<li><code class="docutils literal"><span class="pre">vis</span></code>: A tiny visualization module - AutoCNet is not a collection
+of data views, but a library. This module is designed for quick
+development peaks at the state of things.</li>
+<li><code class="docutils literal"><span class="pre">plio/io</span></code>: The <code class="docutils literal"><span class="pre">plio</span></code> library is leveraged heavily to support
+I/O. We also have a lightweight io module within AutoCNet for
+saving/loading this project.</li>
+<li><code class="docutils literal"><span class="pre">utils</span></code>: This module contains an assortment of utility functions
+for linear algebra operations (aggregating numpy functions), nearest
+neighbor searches, recursive dict traversal, etc.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="Images-that-are-too-large">
+<h2>Images that are too large<a class="headerlink" href="#Images-that-are-too-large" title="Permalink to this headline">¶</a></h2>
+<p>A few options exist for images that are too large for the SIFT
+algorithm. If geospatial information existed, it would be possible to
+contrain the extraction to just the overlap between two (or more)
+images. We could then cross our fingers and hope that the overlap area
+was small enough to fit onto a GPU. Alternatively, it is possible to
+downsample the image and work with the reduced resolution initially. Due
+to these challenges, the <a class="reference external" href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntax
+sugar</a> that exists on
+the <code class="docutils literal"><span class="pre">CandidateGraph</span></code>, <code class="docutils literal"><span class="pre">Node</span></code> and <code class="docutils literal"><span class="pre">Edge</span></code> objects are largely
+unusable.</p>
+<p>What follows is the result of experimentation with the images.</p>
+<p><strong>Step I</strong>: Read the input images from a node&#8217;s geodata object,
+downsample the image so it will fit in memory and extract keypoints.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Read the image into memory from disk</span>
+<span class="c1"># Image 1</span>
+<span class="n">arr0</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">read_array</span><span class="p">()</span>
+
+<span class="c1"># Check the size of the image</span>
+<span class="n">total_size</span> <span class="o">=</span> <span class="n">arr0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">arr0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">downsample_amount</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">total_size</span> <span class="o">/</span> <span class="mi">12500</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Compute the new shape of the output and downsample using Lanczos interpolation</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">arr0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">downsample_amount</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">arr0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">downsample_amount</span><span class="p">))</span>
+<span class="n">arr0</span> <span class="o">=</span> <span class="n">imresize</span><span class="p">(</span><span class="n">arr0</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="s1">&#39;lanczos&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compute the approximate number of points to extract - we are looking for good coverage without being super dense.  This took a bit of trial and error</span>
+<span class="n">npts</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">arr0</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.5</span>
+
+<span class="c1"># Create the SiftData object to store the results</span>
+<span class="n">sd0</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PySiftData</span><span class="p">(</span><span class="n">npts</span><span class="p">)</span>
+
+<span class="c1"># Extract the keypoints.</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">ExtractKeypoints</span><span class="p">(</span><span class="n">arr0</span><span class="p">,</span> <span class="n">sd0</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">kp0</span><span class="p">,</span> <span class="n">des0</span> <span class="o">=</span> <span class="n">sd0</span><span class="o">.</span><span class="n">to_data_frame</span><span class="p">()</span>
+<span class="n">kp0</span> <span class="o">=</span> <span class="n">kp0</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;sharpness&#39;</span><span class="p">,</span> <span class="s1">&#39;edgeness&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;ambiguity&#39;</span><span class="p">]]</span>
+<span class="n">kp0</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">kp0</span><span class="p">[</span><span class="s1">&#39;ambiguity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1"># Check the total number returned</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kp0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+3412
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Parameterization-&amp;-Result-Visualization">
+<h2>Parameterization &amp; Result Visualization<a class="headerlink" href="#Parameterization-&-Result-Visualization" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">cs.ExtractKeypoints</span></code> function takes the input array (image) and
+sift data object as mandatory input parameters. We also pass
+<code class="docutils literal"><span class="pre">thresh=1</span></code> in. This parameter controls the threshold for pruning
+Difference of Gaussian (DoG) features. In short - if not enough features
+are being identified, try reducing the <code class="docutils literal"><span class="pre">thresh</span></code> parameter.</p>
+<p>In the above, we got 3412 (or there abouts on a rerun) points. What is
+important is the spatial distirbution of these. Below, we visualize
+these to check the distribution.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">imshow</span><span class="p">(</span><span class="n">arr0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">kp0</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">kp0</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[26]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x7f06fc4a6e10&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/users_tutorials_apollopan_2._Extracting_Keypoints_(Interest_Points)_12_1.png" src="../../../_images/users_tutorials_apollopan_2._Extracting_Keypoints_(Interest_Points)_12_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Repeat-for-the-other-array">
+<h2>Repeat for the other array<a class="headerlink" href="#Repeat-for-the-other-array" title="Permalink to this headline">¶</a></h2>
+<p>The spatial distribution looks good - time to repeat for the next image!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Image 2</span>
+<span class="n">arr1</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">read_array</span><span class="p">()</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">arr1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">6</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">arr1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">6</span><span class="p">))</span> <span class="c1"># 5 because the max number of pixels is 12500^2</span>
+<span class="n">arr1</span> <span class="o">=</span> <span class="n">imresize</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="s1">&#39;lanczos&#39;</span><span class="p">)</span>
+<span class="n">npts</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">arr1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.5</span>
+<span class="n">sd1</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PySiftData</span><span class="p">(</span><span class="n">npts</span><span class="p">)</span>
+
+<span class="n">cs</span><span class="o">.</span><span class="n">ExtractKeypoints</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">sd1</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">kp1</span><span class="p">,</span> <span class="n">des1</span> <span class="o">=</span> <span class="n">sd1</span><span class="o">.</span><span class="n">to_data_frame</span><span class="p">()</span>
+<span class="n">kp1</span> <span class="o">=</span> <span class="n">kp1</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;sharpness&#39;</span><span class="p">,</span> <span class="s1">&#39;edgeness&#39;</span><span class="p">,</span> <span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;ambiguity&#39;</span><span class="p">]]</span>
+<span class="n">kp1</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">kp1</span><span class="p">[</span><span class="s1">&#39;ambiguity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">imshow</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">kp1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">kp1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[27]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x7f06fc45c518&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/users_tutorials_apollopan_2._Extracting_Keypoints_(Interest_Points)_14_1.png" src="../../../_images/users_tutorials_apollopan_2._Extracting_Keypoints_(Interest_Points)_14_1.png" />
+</div>
+</div>
+<p>Interesting linear feature on the left, but overall looks okay. It might
+be nice to get a few more correspondences, but lets try this for now.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../../_sources/users/tutorials/apollopan/2. Extracting Keypoints (Interest Points).ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

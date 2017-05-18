@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="users/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>We provide AutoCnet as a binary package via conda and for
+installation via the standard setup.py script.</p>
+<div class="section" id="via-conda">
+<h2>Via Conda<a class="headerlink" href="#via-conda" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>[Download](<a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a>) and install the Python 3.x Miniconda installer.  Respond <code class="docutils literal"><span class="pre">Yes</span></code> when
+prompted to add conda to your BASH profile.</li>
+</ol>
+<ol class="arabic simple">
+<li>(Optional) We like to sequester applications in their own environments to avoid any dependency conflicts.  To do this:</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-n</span> <span class="pre">&lt;your_environment_name&gt;</span> <span class="pre">python=3</span> <span class="pre">&amp;&amp;</span> <span class="pre">source</span> <span class="pre">activate</span> <span class="pre">&lt;your_environment_name&gt;</span></code></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple">
+<li>Bring up a command line and add three channels to your conda config (<code class="docutils literal"><span class="pre">~/condarc</span></code>):</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">conda-forge</span></code></li>
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">condig</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">jlaura</span></code></li>
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">menpo</span></code></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple">
+<li>Finally, install autocnet: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">jlaura</span> <span class="pre">autocnet-dev</span></code></li>
+</ol>
+</div>
+<div class="section" id="via-setup-py">
+<h2>Via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h2>
+<p>This method assumes that you have the necessary dependencies already
+installed. The installation of dependencies can be non-trivial because of GDAL.
+We supply an <code class="docutils literal"><span class="pre">environment.yml</span></code> file that works with Anaconda Python&#8217;s <code class="docutils literal"><span class="pre">conda</span>
+<span class="pre">env</span></code> environment management tool.</p>
+</div>
+<div class="section" id="manual-development-environment">
+<h2>Manual Development Environment<a class="headerlink" href="#manual-development-environment" title="Permalink to this headline">¶</a></h2>
+<p>To manually install AutoCnet (for example in a development environment) we must install the necessary dependencies.</p>
+<ol class="arabic simple">
+<li>Create a virtual environment:  <code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-n</span> <span class="pre">autocnet</span> <span class="pre">python=3.5</span> <span class="pre">&amp;&amp;</span> <span class="pre">source</span> <span class="pre">activate</span> <span class="pre">autocnet</span></code></li>
+<li>As above, add conda-forge to the channel list.</li>
+<li>To install the planetary I/O module and the OpenCV computer vision module: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">jlaura</span> <span class="pre">plio</span> <span class="pre">opencv3</span></code></li>
+</ol>
+<p>4. To install the optional VLFeature module (for SIFT): <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">conda-forge</span> <span class="pre">vlfeat</span></code>
+4a. To install the Cython wrapper to vlfeat: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">menpo</span> <span class="pre">cyvlfeat</span></code>
+5. To install PIL and PySAL: <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pillow</span> <span class="pre">pysal</span></code>
+6. To install additional conda packages: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">scipy</span> <span class="pre">networkx</span> <span class="pre">numexpr</span> <span class="pre">dill</span> <span class="pre">cython</span> <span class="pre">pyyaml</span> <span class="pre">matplotlib</span></code></p>
+<p>This ensures that all dependencies needed to run AutoCnet are availble.  We also have development dependencies to
+support automated testing, documentation builds, etc.</p>
+<ol class="arabic simple">
+<li>Install Nose and Sphinx: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">nose</span> <span class="pre">sphinx</span></code></li>
+<li>Install coveralls: <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">coveralls</span></code></li>
+<li>Install the nbsphinx plugin: <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">nbshpinx</span></code></li>
+<li>Install Jupyter for notebook support: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">jupyter</span></code></li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>autocnet.matcher.outlier_detector &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for autocnet.matcher.outlier_detector</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">deque</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="distance_ratio"><a class="viewcode-back" href="../../../library/matcher/outlier_detector.html#autocnet.matcher.outlier_detector.distance_ratio">[docs]</a><span class="k">def</span> <span class="nf">distance_ratio</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute and return a mask for a matches dataframe</span>
+<span class="sd">    using Lowe&#39;s ratio test.  If keypoints have a single</span>
+<span class="sd">    Lowe (2004) [Lowe2004]_</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : float</span>
+<span class="sd">            the ratio between the first and second-best match distances</span>
+<span class="sd">            for each keypoint to use as a bound for marking the first keypoint</span>
+<span class="sd">            as &quot;good&quot;. Default: 0.8</span>
+
+<span class="sd">    single : bool</span>
+<span class="sd">             If True, points with only a single entry are included (True)</span>
+<span class="sd">             in the result mask, else False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mask : pd.dataframe</span>
+<span class="sd">           A Pandas DataFrame mask for the matches with those failing the</span>
+<span class="sd">           ratio test set to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">single</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="n">mask_s</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;source_idx&#39;</span><span class="p">)[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+    <span class="n">single</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mask_d</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">)[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask_s</span> <span class="o">&amp;</span> <span class="n">mask_d</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="spatial_suppression"><a class="viewcode-back" href="../../../library/matcher/outlier_detector.html#autocnet.matcher.outlier_detector.spatial_suppression">[docs]</a><span class="k">def</span> <span class="nf">spatial_suppression</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">min_radius</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">error_k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Spatial suppression using disc based method.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : dataframe</span>
+<span class="sd">         Input dataframe used for suppressing</span>
+
+<span class="sd">    mask : series</span>
+<span class="sd">           pandas boolean series</span>
+
+<span class="sd">    max_radius : float</span>
+<span class="sd">                 Maximum allowable point radius</span>
+
+<span class="sd">    min_radius : float</span>
+<span class="sd">                 The smallest allowable radius size</span>
+
+<span class="sd">    nvalid : int</span>
+<span class="sd">             The number of valid points after suppression</span>
+
+<span class="sd">    k : int</span>
+<span class="sd">        The number of points to be saved</span>
+
+<span class="sd">    error_k : float</span>
+<span class="sd">              [0,1] the acceptable error in k</span>
+
+<span class="sd">    domain : tuple</span>
+<span class="sd">             The (x,y) extent of the input domain</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mask : pd.Series</span>
+<span class="sd">           Boolean suppression mask</span>
+
+<span class="sd">    k : int</span>
+<span class="sd">        The number of unsuppressed observations</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [Gauglitz2011]_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;strength&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The dataframe is missing a </span><span class="si">{}</span><span class="s1"> column.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;strength&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">max_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">process</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Only </span><span class="si">{}</span><span class="s1"> valid points, but </span><span class="si">{}</span><span class="s1"> points requested&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">k</span><span class="p">))</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">nsteps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.95</span>
+    <span class="n">search_space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_radius</span><span class="p">,</span> <span class="n">max_radius</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">)</span>
+    <span class="n">cell_sizes</span> <span class="o">=</span> <span class="n">search_space</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">min_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">search_space</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">prev_min</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">prev_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">while</span> <span class="n">process</span><span class="p">:</span>
+        <span class="c1"># Setup to store results</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">mid_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">min_idx</span> <span class="o">+</span> <span class="n">max_idx</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">min_idx</span> <span class="o">==</span> <span class="n">mid_idx</span> <span class="ow">or</span> <span class="n">mid_idx</span> <span class="o">==</span> <span class="n">max_idx</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unable to optimally solve.  Returning with </span><span class="si">{}</span><span class="s1"> points&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">cell_size</span> <span class="o">=</span> <span class="n">cell_sizes</span><span class="p">[</span><span class="n">mid_idx</span><span class="p">]</span>
+        <span class="n">n_x_cells</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cell_size</span><span class="p">)</span>
+        <span class="n">n_y_cells</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">cell_size</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x_cells</span><span class="p">,</span> <span class="n">n_y_cells</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+        <span class="c1"># Assign all points to bins</span>
+        <span class="n">x_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_x_cells</span><span class="p">)</span>
+        <span class="n">y_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_y_cells</span><span class="p">)</span>
+        <span class="n">xbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">x_edges</span><span class="p">)</span>
+        <span class="n">ybins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">y_edges</span><span class="p">)</span>
+
+        <span class="c1"># Convert bins to cells</span>
+        <span class="n">xbins</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">ybins</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+            <span class="n">x_center</span> <span class="o">=</span> <span class="n">xbins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y_center</span> <span class="o">=</span> <span class="n">ybins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="n">y_center</span><span class="p">,</span> <span class="n">x_center</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">cell</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">p</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">k</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">error_k</span><span class="p">:</span>
+                    <span class="c1"># Too many points, break</span>
+                    <span class="n">min_idx</span> <span class="o">=</span> <span class="n">mid_idx</span>
+                    <span class="k">break</span>
+
+                <span class="n">y_min</span> <span class="o">=</span> <span class="n">y_center</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cell_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">y_min</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">y_min</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">x_min</span> <span class="o">=</span> <span class="n">x_center</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cell_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">x_min</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">x_min</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">y_max</span> <span class="o">=</span> <span class="n">y_center</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cell_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">y_max</span> <span class="o">&gt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">y_max</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">x_max</span> <span class="o">=</span> <span class="n">x_center</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cell_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">x_max</span> <span class="o">&gt;</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">x_max</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># Cover the necessary cells</span>
+                <span class="n">grid</span><span class="p">[</span><span class="n">y_min</span><span class="p">:</span> <span class="n">y_max</span><span class="p">,</span>
+                     <span class="n">x_min</span><span class="p">:</span> <span class="n">x_max</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1">#  Check break conditions</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">error_k</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">error_k</span><span class="p">:</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">error_k</span><span class="p">:</span>
+            <span class="c1"># The radius is too large</span>
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="n">mid_idx</span>
+            <span class="k">if</span> <span class="n">max_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unable to retrieve </span><span class="si">{}</span><span class="s1"> points. Consider reducing the amount of points you request(k)&#39;</span>
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">min_idx</span> <span class="o">==</span> <span class="n">max_idx</span><span class="p">:</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">mask</span><span class="p">,</span> <span class="n">k</span></div>
+
+
+<div class="viewcode-block" id="self_neighbors"><a class="viewcode-back" href="../../../library/matcher/outlier_detector.html#autocnet.matcher.outlier_detector.self_neighbors">[docs]</a><span class="k">def</span> <span class="nf">self_neighbors</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a pandas data series intended to be used as a mask. Each row</span>
+<span class="sd">    is True if it is not matched to a point in the same image (good) and</span>
+<span class="sd">    False if it is (bad.)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matches : dataframe</span>
+<span class="sd">              the matches dataframe stored along the edge of the graph</span>
+<span class="sd">              containing matched points with columns containing:</span>
+<span class="sd">              matched image name, query index, train index, and</span>
+<span class="sd">              descriptor distance</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : dataseries</span>
+<span class="sd">      Intended to mask the matches dataframe. True means the row is not matched to a point in the same image</span>
+<span class="sd">      and false the row is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">matches</span><span class="o">.</span><span class="n">source_image</span> <span class="o">!=</span> <span class="n">matches</span><span class="o">.</span><span class="n">destination_image</span></div>
+
+
+<div class="viewcode-block" id="mirroring_test"><a class="viewcode-back" href="../../../library/matcher/outlier_detector.html#autocnet.matcher.outlier_detector.mirroring_test">[docs]</a><span class="k">def</span> <span class="nf">mirroring_test</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute and return a mask for the matches dataframe on each edge of the graph which</span>
+<span class="sd">    will keep only entries in which there is both a source -&gt; destination match and a destination -&gt;</span>
+<span class="sd">    source match.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matches : dataframe</span>
+<span class="sd">              the matches dataframe stored along the edge of the graph</span>
+<span class="sd">              containing matched points with columns containing:</span>
+<span class="sd">              matched image name, query index, train index, and</span>
+<span class="sd">              descriptor distance</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    duplicates : dataseries</span>
+<span class="sd">                 Intended to mask the matches dataframe. Rows are True if the associated keypoint passes</span>
+<span class="sd">                 the mirroring test and false otherwise. That is, if 1-&gt;2, 2-&gt;1, both rows will be True,</span>
+<span class="sd">                 otherwise, they will be false. Keypoints with only one match will be False. Removes</span>
+<span class="sd">                 duplicate rows.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">duplicate_mask</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;destination_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">duplicate_mask</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cg.cg — Computational Geometry &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="control — Control" href="../control/index.html" />
+    <link rel="prev" title="cg — Computational Geometry" href="index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a><ul class="current">
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">cg.cg</span></code> &#8212; Computational Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+      <li>Next: <a href="../control/index.html" title="next chapter"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cg-cg-computational-geometry">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">cg.cg</span></code> &#8212; Computational Geometry<a class="headerlink" href="#cg-cg-computational-geometry" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">cg.cg</span></code> module provides computational geometry methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.cg.cg"></span><dl class="function">
+<dt id="autocnet.cg.cg.convex_hull">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">convex_hull</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#convex_hull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.convex_hull" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>points</strong> (<em>ndarray</em>) &#8211; (n, 2) array of point coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>hull</strong> &#8211; Provides a convex hull that is used
+to determine coverage</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">2-D convex hull</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.convex_hull_ratio">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">convex_hull_ratio</code><span class="sig-paren">(</span><em>points</em>, <em>ideal_area</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#convex_hull_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.convex_hull_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points</strong> (<em>ndarray</em>) &#8211; (n, 2) array of point coordinates</li>
+<li><strong>ideal_area</strong> (<em>float</em>) &#8211; The total area that could be covered</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ratio</strong> &#8211; The ratio convex hull volume / ideal_area</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.get_area">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">get_area</code><span class="sig-paren">(</span><em>poly1</em>, <em>poly2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#get_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.get_area" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly1</strong> (<em>ogr polygon</em>) &#8211; General ogr polygon</li>
+<li><strong>poly2</strong> (<em>ogr polygon</em>) &#8211; General ogr polygon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>intersection_area</strong> &#8211; returns the intersection area
+of two polygons</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.two_poly_overlap">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">two_poly_overlap</code><span class="sig-paren">(</span><em>poly1</em>, <em>poly2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#two_poly_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.two_poly_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly1</strong> (<em>ogr polygon</em>) &#8211; Any polygon that shares some kind of overlap
+with poly2</li>
+<li><strong>poly2</strong> (<em>ogr polygon</em>) &#8211; Any polygon that shares some kind of overlap
+with poly1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>overlap_percn</strong> (<em>float</em>) &#8211; The percentage of image overlap</li>
+<li><strong>overlap_area</strong> (<em>float</em>) &#8211; The total area of overalap</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.vor">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">vor</code><span class="sig-paren">(</span><em>edge</em>, <em>clean_keys=[]</em>, <em>s=30</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#vor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.vor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a voronoi diagram for an edge using either the coordinate
+transformation or using the homography between source and destination.</p>
+<p>The coordinate transformation uses the footprint of source and destination to
+calculate an intersection between the two images, then transforms the vertices of
+the intersection back into pixel space.</p>
+<p>If a coordinate transform does not exist, use the homography to project the destination image
+onto the source image, producing an area of intersection.</p>
+<p>The intersection vertices are then scaled by a factor of s (default 30), this accounts for the
+areas of the voronoi that would be missed if the scaled vertices were not included into the
+voronoi calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>edge</strong> (<em>object</em>) &#8211; An edge object</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; Of strings used to apply masks to omit correspondences</li>
+<li><strong>s</strong> (<em>int</em>) &#8211; offset for the corners of the image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>vor</strong> (<em>object</em>) &#8211; Scipy Voronoi object</li>
+<li><strong>voronoi_df</strong> (<em>dataframe</em>) &#8211; 3 column pandas dataframe of x, y, and weights</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/cg/cg.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

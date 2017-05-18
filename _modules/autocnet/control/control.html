@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>autocnet.control.control &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../users/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for autocnet.control.control</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">gmtime</span><span class="p">,</span> <span class="n">strftime</span>
+
+
+<div class="viewcode-block" id="Point"><a class="viewcode-back" href="../../../library/control/control.html#autocnet.control.control.Point">[docs]</a><span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An n-image correspondence container class to store</span>
+<span class="sd">    information common to all identical correspondences across</span>
+<span class="sd">    an image set.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    point_id : int</span>
+<span class="sd">               A unique identifier for the given point</span>
+
+<span class="sd">    subpixel : bool</span>
+<span class="sd">               Whether or not the point has been subpixel registered</span>
+
+<span class="sd">    point_type : an ISIS identifier for the type of the point</span>
+<span class="sd">                 as defined in the ISIS protobuf spec.</span>
+
+<span class="sd">    correspondences : list</span>
+<span class="sd">                      of image correspondences</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_subpixel&#39;</span><span class="p">,</span> <span class="s1">&#39;point_id&#39;</span><span class="p">,</span> <span class="s1">&#39;point_type&#39;</span><span class="p">,</span> <span class="s1">&#39;correspondences&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">point_type</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span> <span class="o">=</span> <span class="n">pid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subpixel</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_type</span> <span class="o">=</span> <span class="n">point_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correspondences</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span> <span class="o">==</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subpixel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subpixel</span>
+
+    <span class="nd">@subpixel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">subpixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subpixel</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subpixel</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">point_type</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="Correspondence"><a class="viewcode-back" href="../../../library/control/control.html#autocnet.control.control.Correspondence">[docs]</a><span class="k">class</span> <span class="nc">Correspondence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A single correspondence (image measure).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    id : int</span>
+<span class="sd">         The index of the point in a matches dataframe (stored as an edge attribute)</span>
+
+<span class="sd">    x : float</span>
+<span class="sd">        The x coordinate of the measure in image space</span>
+
+<span class="sd">    y : float</span>
+<span class="sd">        The y coordinate of the measure in image space</span>
+
+<span class="sd">    measure_type : int</span>
+<span class="sd">                   The ISIS measure type as per the protobuf spec</span>
+
+<span class="sd">    serial : str</span>
+<span class="sd">             A unique serial number for the image the measure corresponds to</span>
+<span class="sd">             In the case of an ISIS cube, this is a valid ISIS serial number,</span>
+<span class="sd">             else, None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;measure_type&#39;</span><span class="p">,</span> <span class="s1">&#39;serial&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">measure_type</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">serial</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measure_type</span> <span class="o">=</span> <span class="n">measure_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">serial</span> <span class="o">=</span> <span class="n">serial</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CorrespondenceNetwork"><a class="viewcode-back" href="../../../library/control/control.html#autocnet.control.control.CorrespondenceNetwork">[docs]</a><span class="k">class</span> <span class="nc">CorrespondenceNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container of points and associated correspondences.  The primary</span>
+<span class="sd">    data structures are point_to_correspondence and correspondence_to_point.</span>
+<span class="sd">    These two attributes store the mapping between point and correspondences.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    point_to_correspondence : dict</span>
+<span class="sd">                              with key equal to an instance of the Point class and</span>
+<span class="sd">                              values equal to a list of Correspondences.</span>
+
+<span class="sd">    correspondence_to_point : dict</span>
+<span class="sd">                              with key equal to a correspondence identifier (not the class) and</span>
+<span class="sd">                              value equal to a unique point_id (not an instance of the Point class).</span>
+<span class="sd">                              This attribute serves as a low memory reverse lookup table</span>
+
+<span class="sd">    point_id : int</span>
+<span class="sd">               The current &#39;new&#39; point id if an additional point were to be added</span>
+
+<span class="sd">    n_points : int</span>
+<span class="sd">               The number of points in the CorrespondenceNetwork</span>
+
+<span class="sd">    n_measures : int</span>
+<span class="sd">                 The number of Correspondences in the CorrespondenceNetwork</span>
+
+<span class="sd">    creationdate : str</span>
+<span class="sd">                   The date the instance of this class was first instantiated</span>
+
+<span class="sd">    modifieddata : str</span>
+<span class="sd">                   The date this class last had correspondences and/or points added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_to_correspondence</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correspondence_to_point</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">creationdate</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modifieddate</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_to_correspondence</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_measures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correspondence_to_point</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">add_correspondences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">matches</span><span class="p">):</span>
+        <span class="c1"># Convert the matches dataframe to a dict</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">source_image</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source_image&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">destination_image</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;destination_image&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="c1"># TODO: Handle subpixel registration here</span>
+        <span class="n">s_kps</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">d_kps</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Load the correspondence to point data structure</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">source_idx</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">source_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_idx</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_id</span><span class="p">)</span>
+
+            <span class="n">destination_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+
+            <span class="n">sidx</span> <span class="o">=</span> <span class="n">Correspondence</span><span class="p">(</span><span class="n">source_idx</span><span class="p">,</span> <span class="o">*</span><span class="n">s_kps</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">source_idx</span><span class="p">)],</span> <span class="n">serial</span><span class="o">=</span><span class="n">edge</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isis_serial</span><span class="p">)</span>
+            <span class="n">didx</span> <span class="o">=</span> <span class="n">Correspondence</span><span class="p">(</span><span class="n">destination_idx</span><span class="p">,</span> <span class="o">*</span><span class="n">d_kps</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">destination_idx</span><span class="p">)],</span> <span class="n">serial</span><span class="o">=</span><span class="n">edge</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">isis_serial</span><span class="p">)</span>
+
+            <span class="n">p</span><span class="o">.</span><span class="n">correspondences</span> <span class="o">=</span> <span class="p">[</span><span class="n">sidx</span><span class="p">,</span> <span class="n">didx</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">correspondence_to_point</span><span class="p">[(</span><span class="n">source_image</span><span class="p">,</span> <span class="n">source_idx</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">correspondence_to_point</span><span class="p">[(</span><span class="n">destination_image</span><span class="p">,</span> <span class="n">destination_idx</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">point_to_correspondence</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source_image</span><span class="p">,</span> <span class="n">sidx</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">point_to_correspondence</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">destination_image</span><span class="p">,</span> <span class="n">didx</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">point_id</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_modified_date</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_modified_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modifieddate</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

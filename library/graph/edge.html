@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>graph.edge — Network Edge &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="graph.markov_cluster — Markov Clustering Algorithm" href="markov_cluster.html" />
+    <link rel="prev" title="graph.node — Network Node Object" href="node.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="network.html"><code class="docutils literal"><span class="pre">graph.network</span></code> &#8212; Network File Representation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="node.html"><code class="docutils literal"><span class="pre">graph.node</span></code> &#8212; Network Node Object</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">graph.edge</span></code> &#8212; Network Edge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="markov_cluster.html"><code class="docutils literal"><span class="pre">graph.markov_cluster</span></code> &#8212; Markov Clustering Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Library Reference</a><ul>
+  <li><a href="index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a><ul>
+      <li>Previous: <a href="node.html" title="previous chapter"><code class="docutils literal"><span class="pre">graph.node</span></code> &#8212; Network Node Object</a></li>
+      <li>Next: <a href="markov_cluster.html" title="next chapter"><code class="docutils literal"><span class="pre">graph.markov_cluster</span></code> &#8212; Markov Clustering Algorithm</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="graph-edge-network-edge">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">graph.edge</span></code> &#8212; Network Edge<a class="headerlink" href="#graph-edge-network-edge" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">graph.edge</span></code> module contains the Edge class that extends NetworkX edges.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.graph.edge"></span><dl class="class">
+<dt id="autocnet.graph.edge.Edge">
+<em class="property">class </em><code class="descclassname">autocnet.graph.edge.</code><code class="descname">Edge</code><span class="sig-paren">(</span><em>source=None</em>, <em>destination=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="autocnet.graph.edge.Edge.source">
+<code class="descname">source</code><a class="headerlink" href="#autocnet.graph.edge.Edge.source" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>hashable</em> &#8211; The source node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.graph.edge.Edge.destination">
+<code class="descname">destination</code><a class="headerlink" href="#autocnet.graph.edge.Edge.destination" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>hashable</em> &#8211; The destination node</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.graph.edge.Edge.masks">
+<code class="descname">masks</code><a class="headerlink" href="#autocnet.graph.edge.Edge.masks" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>set</em> &#8211; A list of the available masking arrays</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.graph.edge.Edge.weights">
+<code class="descname">weights</code><a class="headerlink" href="#autocnet.graph.edge.Edge.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Dictionary with two keys overlap_area, and overlap_percn
+overlap_area returns the area overlaped by both images
+overlap_percn retuns the total percentage of overlap</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.clean">
+<code class="descname">clean</code><span class="sig-paren">(</span><em>clean_keys</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of clean keys compute the mask of valid
+matches</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clean_keys</strong> (<em>list</em>) &#8211; of columns names (clean keys)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>matches</strong> (<em>dataframe</em>) &#8211; A masked view of the matches dataframe</li>
+<li><strong>mask</strong> (<em>series</em>) &#8211; A boolean series to inflate back to the full match set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.compute_fundamental_matrix">
+<code class="descname">compute_fundamental_matrix</code><span class="sig-paren">(</span><em>clean_keys=[]</em>, <em>maskname='fundamental'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_fundamental_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_fundamental_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the fundamental matrix (F) using the correspondences tagged to this
+edge.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; Of strings used to apply masks to omit correspondences</li>
+<li><strong>method</strong> (<em>{linear</em><em>, </em><em>nonlinear}</em>) &#8211; Method to use to compute F.  Linear is significantly faster at
+the cost of reduced accuracy.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.transformation.transformations.FundamentalMatrix</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.compute_homography">
+<code class="descname">compute_homography</code><span class="sig-paren">(</span><em>method='ransac'</em>, <em>clean_keys=[]</em>, <em>pid=None</em>, <em>maskname='homography'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_homography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_homography" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each edge in the (sub) graph, compute the homography
+:param outlier_algorithm: An openCV outlier detections algorithm, e.g. cv2.RANSAC
+:type outlier_algorithm: object
+:param clean_keys: of string keys to masking arrays</p>
+<blockquote>
+<div>(created by calling outlier detection)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>transformation_matrix</strong> (<em>ndarray</em>) &#8211; The 3x3 transformation matrix</li>
+<li><strong>mask</strong> (<em>ndarray</em>) &#8211; Boolean array of the outliers</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.compute_overlap">
+<code class="descname">compute_overlap</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate a source and destination minimum bounding rectangle, in
+pixel space</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.compute_weights">
+<code class="descname">compute_weights</code><span class="sig-paren">(</span><em>clean_keys</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a voronoi diagram for the overlap between two images
+then gets the area of each polygon resulting in a voronoi weight.
+These weights are then appended to the matches dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clean_keys</strong> (<em>list</em>) &#8211; Of strings used to apply masks to omit correspondences</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.coverage">
+<code class="descname">coverage</code><span class="sig-paren">(</span><em>clean_keys=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.coverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.coverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acts on the edge given either the source node
+or the destination node and returns the percentage
+of overlap covered by the keypoints. Data for the
+overlap is gathered from the source node of the edge
+resulting in a maximum area difference of 2% when compared
+to the destination.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>total_overlap_percentage</strong> &#8211; returns the overlap area
+covered by the keypoints</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.decompose">
+<code class="descname">decompose</code><span class="sig-paren">(</span><em>subset=False</em>, <em>k=2</em>, <em>maxiteration=2</em>, <em>size=18</em>, <em>buf_dist=3</em>, <em>ndv=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.decompose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to match, this method first decomposed the image into
+$4^{maxiteration}$ subimages and applys matching between each sub-image.</p>
+<p>This method is potential slower than the standard match due to the
+overhead in matching, but can be significantly more accurate.  The
+increase in accuracy is a function of the total image size.  Suggested
+values for maxiteration are provided below.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>k</strong> (<em>int</em>) &#8211; The number of neighbors to find</li>
+<li><strong>maxiteration</strong> (<em>int</em>) &#8211; <p>When using coupled decomposition, the number of recursive
+divisions to apply.  The total number of resultant
+sub-images will be 4 ** maxiteration.  Approximate values:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Number of megapixels | maxiteration |</div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">|&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-|</span></a>&#8212;&#8212;&#8212;&#8212;&#8211;|
+| m &lt; 10               <a href="#id3"><span class="problematic" id="id4">|1-2|</span></a>
+| 10 &lt; m &lt; 30          | 3 |
+| 30 &lt; m &lt; 100         | 4 |
+| 100 &lt; m &lt; 1000       | 5 |
+| m &gt; 1000             | 6 |</p>
+</div></blockquote>
+</li>
+<li><strong>size</strong> (<em>int</em>) &#8211; When using coupled decomposition, the total number of points
+to check in each sub-image to try and find a match.
+Selection of this number is a balance between seeking a
+representative mid-point and computational cost.</li>
+<li><strong>buf_dist</strong> (<em>int</em>) &#8211; When using coupled decomposition, the distance from the edge of
+the (sub)image a point must be in order to be used as a
+partioning point.  The smaller the distance, the more likely
+percision errors can results in erroneous partitions.</li>
+<li><strong>ndv</strong> (<em>float</em>) &#8211; The no data value that will be masked when computing the radial
+correlation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.match">
+<code class="descname">match</code><span class="sig-paren">(</span><em>k=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two sets of descriptors, utilize a FLANN (Approximate Nearest
+Neighbor KDTree) matcher to find the k nearest matches.  Nearness is
+the euclidean distance between descriptors.</p>
+<p>The matches are then added as an attribute to the edge object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> (<em>int</em>) &#8211; The number of neighbors to find</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.overlap">
+<code class="descname">overlap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acts on an edge and returns the overlap area and percentage of overlap
+between the two images on the edge. Data is returned to the
+weights dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.subpixel_register">
+<code class="descname">subpixel_register</code><span class="sig-paren">(</span><em>clean_keys=[]</em>, <em>threshold=0.8</em>, <em>template_size=19</em>, <em>search_size=53</em>, <em>max_x_shift=1.0</em>, <em>max_y_shift=1.0</em>, <em>tiled=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.subpixel_register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.subpixel_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the entire graph, compute the subpixel offsets using pattern-matching and add the result
+as an attribute to each edge of the graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; of string keys to masking arrays
+(created by calling outlier detection)</li>
+<li><strong>threshold</strong> (<em>float</em>) &#8211; On the range [-1, 1].  Values less than or equal to
+this threshold are masked and can be considered
+outliers</li>
+<li><strong>upsampling</strong> (<em>int</em>) &#8211; The multiplier to the template and search shapes to upsample
+for subpixel accuracy</li>
+<li><strong>template_size</strong> (<em>int</em>) &#8211; The size of the template in pixels, must be odd</li>
+<li><strong>search_size</strong> (<em>int</em>) &#8211; The size of the search</li>
+<li><strong>max_x_shift</strong> (<em>float</em>) &#8211; The maximum (positive) value that a pixel can shift in the x direction
+without being considered an outlier</li>
+<li><strong>max_y_shift</strong> (<em>float</em>) &#8211; The maximum (positive) value that a pixel can shift in the y direction
+without being considered an outlier</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.suppress">
+<code class="descname">suppress</code><span class="sig-paren">(</span><em>suppression_func=&lt;function correlation&gt;</em>, <em>clean_keys=[]</em>, <em>maskname='suppression'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.suppress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.suppress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a disc based suppression algorithm to get a good spatial
+distribution of high quality points, where the user defines some
+function to be used as the quality metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>suppression_func</strong> (<em>object</em>) &#8211; A function that returns a scalar value to be used
+as the strength of a given row in the matches data
+frame.</li>
+<li><strong>suppression_args</strong> (<em>tuple</em>) &#8211; Arguments to be passed on to the suppression function</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; of mask keys to be used to reduce the total size
+of the matches dataframe.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/graph/edge.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

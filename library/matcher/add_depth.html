@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>matcher.add_depth — n-Image Punch Through &#8212; AutoCNet</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matcher-add-depth-n-image-punch-through">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">matcher.add_depth</span></code> &#8212; n-Image Punch Through<a class="headerlink" href="#matcher-add-depth-n-image-punch-through" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">matcher.add_depth</span></code> module</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.matcher.add_depth"></span><dl class="function">
+<dt id="autocnet.matcher.add_depth.deepen_correspondences">
+<code class="descclassname">autocnet.matcher.add_depth.</code><code class="descname">deepen_correspondences</code><span class="sig-paren">(</span><em>ab_kp, bc, source_idx, clean_keys=['fundamental'], geometric_threshold=2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/add_depth.html#deepen_correspondences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.add_depth.deepen_correspondences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a set of input correspondences, use the fundamental matrix to search
+for additional correspondences.</p>
+<p>The algorithm functions by selecting all edges incident to the given node,
+concatenating the dataframes of matches into a single large table, and then
+grouping those matches by the current node&#8217;s correspondence index.  In an
+idealized case, the number of entries in each group would equal the number
+of incident edges.  When this is not true, the point in the source image
+is projected to the epipolar line in the destination image and a search
+of previously omitted points is performed.  Should a previously omitted
+point fulfill the geometric constraint, the match is added to the
+currently valid set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ab_kp</strong> (<em>ndarray</em>) &#8211; Homogeneous point that is projected to an epipolar line in bc</li>
+<li><strong>bc</strong> (<em>object</em>) &#8211; Edge object with points that are searched along
+the epipolar line defined by ab</li>
+<li><strong>source_idx</strong> (<em>int</em>) &#8211; Index into bc identifying candidate matches</li>
+<li><strong>geometric_threshold</strong> (<em>float</em>) &#8211; The maximum projection error, in pixels, a point can be
+from the corresponding epipolar line to still be considered
+an inlier.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2015 - , AutoCNetDevelopers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/library/matcher/add_depth.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
