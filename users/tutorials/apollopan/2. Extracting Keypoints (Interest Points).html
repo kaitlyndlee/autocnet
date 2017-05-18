@@ -1,15 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
     
-    <title>Extracting Keypoints (Interest Points) &#8212; AutoCNet</title>
+    <title>Extracting Keypoints (Interest Points) &mdash; AutoCNet</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" >
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -17,113 +17,111 @@
         VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Matching" href="3. Matching.html" />
-    <link rel="prev" title="Creating the CandidateGraph Object" href="1. Creating the CandidateGraph Object.html" />
-   
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <script type="text/javascript" src="../../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" >
+    <link rel="search" title="Search" href="../../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../../index.html" >
+    <link rel="up" title="Getting Started with AutoCNet" href="../index.html" >
+    <link rel="next" title="Matching" href="3. Matching.html" >
+    <link rel="prev" title="Creating the CandidateGraph Object" href="1. Creating the CandidateGraph Object.html" > 
   </head>
-  <body role="document">
-  <div class="document">
-    
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../../index.html" >User Guide</a></li>
+          <li class="active"><a href="../index.html" accesskey="U">Getting Started with AutoCNet</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="3. Matching.html" title="Matching"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="1. Creating the CandidateGraph Object.html" title="Creating the CandidateGraph Object"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/favicon.png" alt="Logo"/>
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo">
             </a></p>
-<h1 class="logo"><a href="../../../index.html">AutoCNet</a></h1>
-
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">User Guide</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../introduction.html">What is AutoCNet?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html">Installing AutoCNet</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Getting Started with AutoCNet</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#"> Extracting Keypoints (Interest Points)</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Candidate-Graph">Candidate Graph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Enable-GPU-use">Enable GPU use</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Aside:-AutoCNet-as-a-library">Aside: AutoCNet as a library</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#Modules:">Modules:</a></li>
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Extracting Keypoints (Interest Points)</a><ul>
+<li><a class="reference internal" href="#Candidate-Graph">Candidate Graph</a></li>
+<li><a class="reference internal" href="#Enable-GPU-use">Enable GPU use</a></li>
+<li><a class="reference internal" href="#Aside:-AutoCNet-as-a-library">Aside: AutoCNet as a library</a><ul>
+<li><a class="reference internal" href="#Modules:">Modules:</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#Images-that-are-too-large">Images that are too large</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Parameterization-&amp;-Result-Visualization">Parameterization &amp; Result Visualization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Repeat-for-the-other-array">Repeat for the other array</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="3. Matching.html"> Matching</a></li>
-<li class="toctree-l3"><a class="reference internal" href="4. Fundamental Matrix.html"> Fundamental Matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a></li>
-<li class="toctree-l3"><a class="reference internal" href="5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a></li>
-<li class="toctree-l3"><a class="reference internal" href="5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a></li>
-<li class="toctree-l3"><a class="reference internal" href="6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a></li>
-<li class="toctree-l3"><a class="reference internal" href="6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a></li>
-<li class="toctree-l3"><a class="reference internal" href="7. Saving and Loading.html"> Saving and Loadin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a></li>
-<li class="toctree-l3"><a class="reference internal" href="9. Creating a Control Network.html"> Creating a Control Network</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Advanced 1. Extending the CandidateGraph.html"> Advanced: Extending the CandidateGraph</a></li>
+<li><a class="reference internal" href="#Images-that-are-too-large">Images that are too large</a></li>
+<li><a class="reference internal" href="#Parameterization-&amp;-Result-Visualization">Parameterization &amp; Result Visualization</a></li>
+<li><a class="reference internal" href="#Repeat-for-the-other-array">Repeat for the other array</a></li>
 </ul>
 </li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../library/index.html">Library Reference</a></li>
-</ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">User Guide</a><ul>
-  <li><a href="../index.html">Getting Started with AutoCNet</a><ul>
-      <li>Previous: <a href="1. Creating the CandidateGraph Object.html" title="previous chapter">Creating the CandidateGraph Object</a></li>
-      <li>Next: <a href="3. Matching.html" title="next chapter">Matching</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="1. Creating the CandidateGraph Object.html"
+                        title="previous chapter">Creating the CandidateGraph Object</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="3. Matching.html"
+                        title="next chapter">Matching</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../../_sources/users/tutorials/apollopan/2. Extracting Keypoints (Interest Points).ipynb.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/users/tutorials/apollopan/2. Extracting Keypoints (Interest Points).ipynb.rst">Edit page</a>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
-      <div class="documentwrapper">
+          <div class="span9">
+            
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body" id="spc-section-body">
             
   
 <style>
@@ -191,7 +189,7 @@ div.nboutput div.prompt pre {
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 9ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -604,23 +602,32 @@ be nice to get a few more correspondences, but lets try this for now.</p>
 
           </div>
         </div>
+          </div>
+        </div>
       </div>
-    <div class="clearer"></div>
-  </div>
-    <div class="footer">
-      &copy;2015 - , AutoCNetDevelopers.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="../../../_sources/users/tutorials/apollopan/2. Extracting Keypoints (Interest Points).ipynb.txt"
-          rel="nofollow">Page source</a>
     </div>
 
-    
-
-    
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
   </body>
 </html>

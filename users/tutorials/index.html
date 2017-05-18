@@ -1,15 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
     
-    <title>Getting Started with AutoCNet &#8212; AutoCNet</title>
+    <title>Getting Started with AutoCNet &mdash; AutoCNet</title>
     
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -17,100 +17,94 @@
         VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Creating the CandidateGraph Object" href="apollopan/1. Creating the CandidateGraph Object.html" />
-    <link rel="prev" title="Install AutoCNet" href="../installation.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" >
+    <link rel="search" title="Search" href="../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="User Guide" href="../index.html" >
+    <link rel="next" title="Creating the CandidateGraph Object" href="apollopan/1. Creating the CandidateGraph Object.html" >
+    <link rel="prev" title="Install AutoCNet" href="../installation.html" > 
   </head>
-  <body role="document">
-  <div class="document">
-    
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../index.html" accesskey="U">User Guide</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="apollopan/1. Creating the CandidateGraph Object.html" title="Creating the CandidateGraph Object"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="../installation.html" title="Install AutoCNet"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+              <img class="logo" src="../../_static/favicon.png" alt="Logo">
             </a></p>
-<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
-
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">User Guide</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../introduction.html">What is AutoCNet?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../installation.html">Installing AutoCNet</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting Started with AutoCNet</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html"> Extracting Keypoints (Interest Points)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/3. Matching.html"> Matching</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html"> Fundamental Matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/7. Saving and Loading.html"> Saving and Loadin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/9. Creating a Control Network.html"> Creating a Control Network</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html"> Advanced: Extending the CandidateGraph</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../library/index.html">Library Reference</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">User Guide</a><ul>
-      <li>Previous: <a href="../installation.html" title="previous chapter">Install AutoCNet</a></li>
-      <li>Next: <a href="apollopan/1. Creating the CandidateGraph Object.html" title="next chapter">Creating the CandidateGraph Object</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../installation.html"
+                        title="previous chapter">Install AutoCNet</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="apollopan/1. Creating the CandidateGraph Object.html"
+                        title="next chapter">Creating the CandidateGraph Object</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../_sources/users/tutorials/index.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/users/tutorials/index.rst.rst">Edit page</a>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
-      <div class="documentwrapper">
+          <div class="span9">
+            
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body" id="spc-section-body">
             
   <div class="section" id="getting-started-with-autocnet">
 <h1>Getting Started with AutoCNet<a class="headerlink" href="#getting-started-with-autocnet" title="Permalink to this headline">¶</a></h1>
@@ -209,23 +203,32 @@ repository at &lt;<a class="reference external" href="https://github.com/USGS-As
 
           </div>
         </div>
+          </div>
+        </div>
       </div>
-    <div class="clearer"></div>
-  </div>
-    <div class="footer">
-      &copy;2015 - , AutoCNetDevelopers.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="../../_sources/users/tutorials/index.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
-    
-
-    
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
   </body>
 </html>

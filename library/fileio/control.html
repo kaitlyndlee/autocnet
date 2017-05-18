@@ -1,15 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
     
-    <title>fileio.io_controlnetwork — ISIS Compatible Control Network Creation &#8212; AutoCNet</title>
+    <title>fileio.io_controlnetwork — ISIS Compatible Control Network Creation &mdash; AutoCNet</title>
     
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -17,104 +17,95 @@
         VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="fileio.io_gdal — Geospatial Data Abstraction Library" href="gdal.html" />
-    <link rel="prev" title="fileio — File Input/Output" href="index.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" >
+    <link rel="search" title="Search" href="../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="fileio — File Input/Output" href="index.html" >
+    <link rel="next" title="fileio.io_gdal — Geospatial Data Abstraction Library" href="gdal.html" >
+    <link rel="prev" title="fileio — File Input/Output" href="index.html" > 
   </head>
-  <body role="document">
-  <div class="document">
-    
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../index.html" >Library Reference</a></li>
+          <li class="active"><a href="index.html" accesskey="U"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="gdal.html" title="fileio.io_gdal — Geospatial Data Abstraction Library"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="index.html" title="fileio — File Input/Output"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/favicon.png" alt="Logo"/>
+              <img class="logo" src="../../_static/favicon.png" alt="Logo">
             </a></p>
-<h1 class="logo"><a href="../../index.html">AutoCNet</a></h1>
-
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=USGS-Astrogeology&repo=plio&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../users/index.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#autocnet">AutoCNet</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#sub-packages">Sub-packages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a><ul class="current">
-<li class="toctree-l5 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">fileio.io_controlnetwork</span></code> &#8212; ISIS Compatible Control Network Creation</a></li>
-<li class="toctree-l5"><a class="reference internal" href="gdal.html"><code class="docutils literal"><span class="pre">fileio.io_gdal</span></code> &#8212; Geospatial Data Abstraction Library</a></li>
-<li class="toctree-l5"><a class="reference internal" href="json.html"><code class="docutils literal"><span class="pre">fileio.io_json</span></code> &#8212; JSON Wrapper</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Library Reference</a><ul>
-  <li><a href="index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
-      <li>Next: <a href="gdal.html" title="next chapter"><code class="docutils literal"><span class="pre">fileio.io_gdal</span></code> &#8212; Geospatial Data Abstraction Library</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gdal.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">fileio.io_gdal</span></code> &#8212; Geospatial Data Abstraction Library</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../_sources/library/fileio/control.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/library/fileio/control.rst.rst">Edit page</a>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
         </div>
       </div>
-      <div class="documentwrapper">
+          <div class="span9">
+            
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body" id="spc-section-body">
             
   <div class="section" id="fileio-io-controlnetwork-isis-compatible-control-network-creation">
 <h1><code class="xref py py-mod docutils literal"><span class="pre">fileio.io_controlnetwork</span></code> &#8212; ISIS Compatible Control Network Creation<a class="headerlink" href="#fileio-io-controlnetwork-isis-compatible-control-network-creation" title="Permalink to this headline">¶</a></h1>
@@ -127,23 +118,32 @@
 
           </div>
         </div>
+          </div>
+        </div>
       </div>
-    <div class="clearer"></div>
-  </div>
-    <div class="footer">
-      &copy;2015 - , AutoCNetDevelopers.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="../../_sources/library/fileio/control.rst.txt"
-          rel="nofollow">Page source</a>
     </div>
 
-    
-
-    
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
   </body>
 </html>
