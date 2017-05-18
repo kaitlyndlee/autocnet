@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>autocnet.graph.network &mdash; AutoCNet</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" >
+    <link rel="search" title="Search" href="../../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../../index.html" >
+    <link rel="up" title="Module code" href="../../index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../../index.html" accesskey="U">Module code</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo">
+            </a></p>
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <h1>Source code for autocnet.graph.network</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">gmtime</span><span class="p">,</span> <span class="n">strftime</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">plio.io</span> <span class="k">import</span> <span class="n">io_hdf</span><span class="p">,</span> <span class="n">io_json</span>
+<span class="kn">from</span> <span class="nn">plio.utils</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">plio.io.io_gdal</span> <span class="k">import</span> <span class="n">GeoDataset</span>
+<span class="kn">from</span> <span class="nn">autocnet.graph</span> <span class="k">import</span> <span class="n">markov_cluster</span>
+<span class="kn">from</span> <span class="nn">autocnet.graph.edge</span> <span class="k">import</span> <span class="n">Edge</span>
+<span class="kn">from</span> <span class="nn">autocnet.graph.node</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="kn">from</span> <span class="nn">autocnet.io</span> <span class="k">import</span> <span class="n">network</span> <span class="k">as</span> <span class="n">io_network</span>
+<span class="kn">from</span> <span class="nn">autocnet.vis.graph_view</span> <span class="k">import</span> <span class="n">plot_graph</span><span class="p">,</span> <span class="n">cluster_plot</span>
+
+
+<div class="viewcode-block" id="CandidateGraph"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph">[docs]</a><span class="k">class</span> <span class="nc">CandidateGraph</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A NetworkX derived directed graph to store candidate overlap images.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    node_counter : int</span>
+<span class="sd">                   The number of nodes in the graph.</span>
+<span class="sd">    node_name_map : dict</span>
+<span class="sd">                    The mapping of image labels (i.e. file base names) to their</span>
+<span class="sd">                    corresponding node indices</span>
+
+<span class="sd">    clusters : dict</span>
+<span class="sd">               of clusters with key as the cluster id and value as a</span>
+<span class="sd">               list of node indices</span>
+
+<span class="sd">    cn : object</span>
+<span class="sd">         A control network object instantiated by calling generate_cnet.</span>
+<span class="sd">    ----------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">edge_attr_dict_factory</span> <span class="o">=</span> <span class="n">Edge</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">basepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CandidateGraph</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_counter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">node_labels</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_name_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">node_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">image_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span>
+            <span class="n">image_path</span> <span class="o">=</span> <span class="n">node_name</span>
+            <span class="c1"># Replace the default attr dict with a Node object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">image_name</span><span class="p">,</span> <span class="n">image_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_counter&#39;</span><span class="p">])</span>
+
+            <span class="c1"># fill the dictionary used for relabelling nodes with relative path keys</span>
+            <span class="n">node_labels</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_counter&#39;</span><span class="p">]</span>
+            <span class="c1"># fill the dictionary used for mapping base name to node index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_name_map&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node_name</span><span class="p">][</span><span class="s1">&#39;image_name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_counter&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;node_counter&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_labels</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">d</span><span class="p">:</span>
+                <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">destination</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;creationdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;modifieddate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Check the nodes</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">d</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">d</span><span class="p">]:</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">eq</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CandidateGraph.from_filelist"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.from_filelist">[docs]</a>    <span class="k">def</span> <span class="nf">from_filelist</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">filelist</span><span class="p">,</span> <span class="n">basepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the class using a filelist as a python list.</span>
+<span class="sd">        An adjacency structure is calculated using the lat/lon information in the</span>
+<span class="sd">        input images. Currently only images with this information are supported.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filelist : list</span>
+<span class="sd">                   A list containing the files (with full paths) to construct an adjacency graph from</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        : object</span>
+<span class="sd">          A Network graph object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filelist</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">filelist</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">file_to_list</span><span class="p">(</span><span class="n">filelist</span><span class="p">)</span>
+        <span class="c1"># TODO: Reject unsupported file formats + work with more file formats</span>
+        <span class="k">if</span> <span class="n">basepath</span><span class="p">:</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">GeoDataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">GeoDataset</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">]</span>
+
+        <span class="c1"># This is brute force for now, could swap to an RTree at some point.</span>
+        <span class="n">adjacency_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">valid_datasets</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+            <span class="n">adjacency_dict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">footprint</span>
+            <span class="k">if</span> <span class="n">fp</span> <span class="ow">and</span> <span class="n">fp</span><span class="o">.</span><span class="n">IsValid</span><span class="p">():</span>
+                <span class="n">valid_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Missing or invalid geospatial data for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">base_name</span><span class="p">))</span>
+
+        <span class="c1"># Grab the footprints and test for intersection</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">valid_datasets</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">i_fp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">footprint</span>
+            <span class="n">j_fp</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">footprint</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i_fp</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">j_fp</span><span class="p">):</span>
+                    <span class="n">adjacency_dict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                    <span class="n">adjacency_dict</span><span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Failed to calculated intersection between </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">adjacency_dict</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CandidateGraph.from_adjacency"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.from_adjacency">[docs]</a>    <span class="k">def</span> <span class="nf">from_adjacency</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_adjacency</span><span class="p">,</span> <span class="n">basepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the class using an adjacency dict or file. The input must contain relative or</span>
+<span class="sd">        absolute paths to image files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_adjacency : dict or str</span>
+<span class="sd">                          An adjacency dictionary or the name of a file containing an adjacency dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">         : object</span>
+<span class="sd">           A Network graph object</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from autocnet.examples import get_path</span>
+<span class="sd">        &gt;&gt;&gt; inputfile = get_path(&#39;adjacency.json&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; candidate_graph = network.CandidateGraph.from_adjacency(inputfile)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_adjacency</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">input_adjacency</span> <span class="o">=</span> <span class="n">io_json</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">input_adjacency</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_adjacency</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">input_adjacency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+                <span class="n">input_adjacency</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">input_adjacency</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">input_adjacency</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the last modified date attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s1">&#39;modifieddate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">gmtime</span><span class="p">())</span>
+
+<div class="viewcode-block" id="CandidateGraph.get_name"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.get_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the image name for the given node.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        node_index : int</span>
+<span class="sd">                     The index of the node.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">         : str</span>
+<span class="sd">           The name of the image attached to the given node.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">node_index</span><span class="p">][</span><span class="s1">&#39;image_name&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.add_image"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds an image node to the graph.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.extract_features"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.extract_features">[docs]</a>    <span class="k">def</span> <span class="nf">extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts features from each image in the graph and uses the result to assign the</span>
+<span class="sd">        node attributes for &#39;handle&#39;, &#39;image&#39;, &#39;keypoints&#39;, and &#39;descriptors&#39;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : {&#39;orb&#39;, &#39;sift&#39;, &#39;fast&#39;}</span>
+<span class="sd">                 The descriptor method to be used</span>
+
+<span class="sd">        extractor_parameters : dict</span>
+<span class="sd">                               A dictionary containing OpenCV SIFT parameters names and values.</span>
+
+<span class="sd">        downsampling : int</span>
+<span class="sd">                       The divisor to image_size to down sample the input image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.extract_subsets"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.extract_subsets">[docs]</a>    <span class="k">def</span> <span class="nf">extract_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts features from each image in those regions estimated to be</span>
+<span class="sd">        overlapping.</span>
+
+<span class="sd">        *args and **kwargs are passed to the feature extractor.  For example,</span>
+<span class="sd">        passing method=&#39;sift&#39; will cause the extractor to use the sift method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">extract_subset</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CandidateGraph.save_features"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.save_features">[docs]</a>    <span class="k">def</span> <span class="nf">save_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Save the features (keypoints and descriptors) for the</span>
+<span class="sd">        specified nodes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        out_path : str</span>
+<span class="sd">                   Location of the output file.  If the file exists,</span>
+<span class="sd">                   features are appended.  Otherwise, the file is created.</span>
+
+<span class="sd">        nodes : list</span>
+<span class="sd">                of nodes to save features for.  If empty, save for all nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">n</span><span class="o">.</span><span class="n">save_features</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.load_features"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.load_features">[docs]</a>    <span class="k">def</span> <span class="nf">load_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_path</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="p">[],</span> <span class="n">nfeatures</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load features (keypoints and descriptors) for the</span>
+<span class="sd">        specified nodes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        in_path : str</span>
+<span class="sd">                  Location of the input file.</span>
+
+<span class="sd">        nodes : list</span>
+<span class="sd">                of nodes to load features for.  If empty, load features</span>
+<span class="sd">                for all nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n</span><span class="o">.</span><span class="n">load_features</span><span class="p">(</span><span class="n">in_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.match"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For all connected edges in the graph, apply feature matching</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        ----------</span>
+<span class="sd">        autocnet.graph.edge.Edge.match</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;match&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.decompose_and_match"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.decompose_and_match">[docs]</a>    <span class="k">def</span> <span class="nf">decompose_and_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For all edges in the graph, apply coupled decomposition followed by</span>
+<span class="sd">        feature matching.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.graph.edge.Edge.decompose_and_match</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;decompose_and_match&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.estimate_mbrs"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.estimate_mbrs">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_mbrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For each edge, estimate the overlap and compute a minimum bounding</span>
+<span class="sd">        rectangle (mbr) in pixel space.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.graoh.edge.Edge.compute_mbr</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;estimate_mbr&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.compute_clusters"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.compute_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">compute_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">markov_cluster</span><span class="o">.</span><span class="n">mcl</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply some graph clustering algorithm to compute a subset of the global</span>
+<span class="sd">        graph.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : object</span>
+<span class="sd">               The clustering function to be applied.  Defaults to</span>
+<span class="sd">               Markov Clustering Algorithm</span>
+
+<span class="sd">        args : list</span>
+<span class="sd">               of arguments to be passed through to the func</span>
+
+<span class="sd">        kwargs : dict</span>
+<span class="sd">                 of keyword arguments to be passed through to the func</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.compute_triangular_cycles"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.compute_triangular_cycles">[docs]</a>    <span class="k">def</span> <span class="nf">compute_triangular_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find all cycles of length 3.  This is similar</span>
+<span class="sd">         to cycle_basis (networkX), but returns all cycles.</span>
+<span class="sd">         As opposed to all basis cycles.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cycles : list</span>
+<span class="sd">                 A list of cycles in the form [(a,b,c), (c,d,e)],</span>
+<span class="sd">                 where letters indicate node identifiers</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; g = CandidateGraph()</span>
+<span class="sd">        &gt;&gt;&gt; g.add_edges_from([(0,1), (0,2), (1,2), (0,3), (1,3), (2,3)])</span>
+<span class="sd">        &gt;&gt;&gt; g.compute_triangular_cycles()</span>
+<span class="sd">        [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cycles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+                    <span class="n">cycles</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cycles</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.minimum_spanning_tree"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.minimum_spanning_tree">[docs]</a>    <span class="k">def</span> <span class="nf">minimum_spanning_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the minimum spanning tree of the graph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">         : DataFrame</span>
+<span class="sd">           boolean mask for edges in the minimum spanning tree</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mst</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">minimum_spanning_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_edge_subgraph</span><span class="p">(</span><span class="n">mst</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.apply_func_to_edges"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.apply_func_to_edges">[docs]</a>    <span class="k">def</span> <span class="nf">apply_func_to_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterates over edges using an optional mask and and applies the given function.</span>
+<span class="sd">        If func is not an attribute of Edge, raises AttributeError</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        function : obj</span>
+<span class="sd">                   function to be called on every edge</span>
+
+<span class="sd">        graph_mask_keys : list</span>
+<span class="sd">                          of keys in graph_masks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">function</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="s1">&#39; is not an attribute of Edge&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.symmetry_checks"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.symmetry_checks">[docs]</a>    <span class="k">def</span> <span class="nf">symmetry_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Apply a symmetry check to all edges in the graph</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;symmetry_check&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.ratio_checks"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.ratio_checks">[docs]</a>    <span class="k">def</span> <span class="nf">ratio_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Apply a ratio check to all edges in the graph</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.matcher.outlier_detector.DistanceRatio.compute</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;ratio_check&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.compute_homographies"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.compute_homographies">[docs]</a>    <span class="k">def</span> <span class="nf">compute_homographies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute homographies for all edges using identical parameters</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.graph.edge.Edge.compute_homography</span>
+<span class="sd">        autocnet.matcher.outlier_detector.compute_homography</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;compute_homography&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.compute_fundamental_matrices"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.compute_fundamental_matrices">[docs]</a>    <span class="k">def</span> <span class="nf">compute_fundamental_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute fundmental matrices for all edges using identical parameters</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.matcher.outlier_detector.compute_fundamental_matrix</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;compute_fundamental_matrix&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.subpixel_register"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.subpixel_register">[docs]</a>    <span class="k">def</span> <span class="nf">subpixel_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute subpixel offsets for all edges using identical parameters</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.graph.edge.Edge.subpixel_register</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;subpixel_register&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.suppress"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.suppress">[docs]</a>    <span class="k">def</span> <span class="nf">suppress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Apply a metric of point suppression to the graph</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.matcher.outlier_detector.SpatialSuppression</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;suppress&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.overlap"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.overlap">[docs]</a>    <span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute the percentage and area coverage of two images</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.cg.cg.two_image_overlap</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_func_to_edges</span><span class="p">(</span><span class="s1">&#39;overlap&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.to_filelist"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.to_filelist">[docs]</a>    <span class="k">def</span> <span class="nf">to_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a file list for the entire graph.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        filelist : list</span>
+<span class="sd">                   A list where each entry is a string containing the full path to an image in the graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filelist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;image_path&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">filelist</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.generate_cnet"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.generate_cnet">[docs]</a>    <span class="k">def</span> <span class="nf">generate_cnet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">deepen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute (or re-compute) a CorrespondenceNetwork attribute</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        deepen : bool</span>
+<span class="sd">                 Whether or not to attempt to punch through correspondences.  Default: False</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        autocnet.graph.node.Node</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">n</span><span class="o">.</span><span class="n">group_correspondences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">deepen</span><span class="o">=</span><span class="n">deepen</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cn</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">point_to_correspondence_df</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span>
+                   <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">point_to_correspondence_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.island_nodes"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.island_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">island_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds single nodes that are completely disconnected from the rest of the graph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        : list</span>
+<span class="sd">          A list of disconnected nodes, nodes of degree zero, island nodes, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">isolates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.connected_subgraphs"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.connected_subgraphs">[docs]</a>    <span class="k">def</span> <span class="nf">connected_subgraphs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds and returns a list of each connected subgraph of nodes. Each subgraph is a set.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">         : list</span>
+<span class="sd">           A list of connected sub-graphs of nodes, with the largest sub-graph first. Each subgraph is a set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.save"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the graph object to disk.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">                   The relative or absolute PATH where the network is saved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">io_network</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.plot"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the graph object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax : object</span>
+<span class="sd">             A MatPlotLib axes object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">         : object</span>
+<span class="sd">           A MatPlotLib axes object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">plot_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.plot_cluster"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.plot_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">plot_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the graph based on the clusters generated by</span>
+<span class="sd">        the markov clustering algorithm</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax : object</span>
+<span class="sd">             A MatPlotLib axes object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax : object</span>
+<span class="sd">             A MatPlotLib axes object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cluster_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.create_edge_subgraph"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.create_edge_subgraph">[docs]</a>    <span class="k">def</span> <span class="nf">create_edge_subgraph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a subgraph using a list of edges.</span>
+<span class="sd">        This is pulled directly from the networkx dev branch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        edges : list</span>
+<span class="sd">                A list of edges in the form [(a,b), (c,d)] to retain</span>
+<span class="sd">                in the subgraph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        H : object</span>
+<span class="sd">            A networkx subgraph object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span>
+        <span class="c1"># Filter out edges that don&#39;t correspond to nodes in the graph.</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">adj</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">adj</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="c1"># Copy the node attributes if they haven&#39;t been copied</span>
+            <span class="c1"># already.</span>
+            <span class="k">if</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+                <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+                <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+            <span class="c1"># Create an entry in the adjacency dictionary for the</span>
+            <span class="c1"># nodes u and v if they don&#39;t exist yet.</span>
+            <span class="k">if</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">:</span>
+                <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">adjlist_dict_factory</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">:</span>
+                <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">adjlist_dict_factory</span><span class="p">()</span>
+            <span class="c1"># Copy the edge attributes.</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span>
+            <span class="c1"># H.edge[v][u] = self.edge[v][u]</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">return</span> <span class="n">H</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.size"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This replaces the built-in size method to properly</span>
+<span class="sd">        support Python 3 rounding.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        weight : string or None, optional (default=None)</span>
+<span class="sd">           The edge attribute that holds the numerical value used</span>
+<span class="sd">           as a weight.  If None, then each edge has weight 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nedges : int</span>
+<span class="sd">            The number of edges or sum of edge weights in the graph.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">weight</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.create_node_subgraph"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.create_node_subgraph">[docs]</a>    <span class="k">def</span> <span class="nf">create_node_subgraph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a list of nodes, create a sub-graph and</span>
+<span class="sd">        copy both the node and edge attributes to the subgraph.</span>
+<span class="sd">        Changes to node/edge attributes are propagated back to the</span>
+<span class="sd">        parent graph, while changes to the graph structure, i.e.,</span>
+<span class="sd">        the topology, are not.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nodes : iterable</span>
+<span class="sd">                An iterable (list, set, ndarray) of nodes to subset</span>
+<span class="sd">                the graph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        H : object</span>
+<span class="sd">            A networkX graph object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bunch</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbunch_iter</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
+        <span class="c1"># create new graph and copy subgraph into it</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+
+        <span class="c1"># copy node and attribute dictionaries</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">bunch</span><span class="p">:</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="c1"># namespace shortcuts for speed</span>
+        <span class="n">H_adj</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">adj</span>
+        <span class="n">self_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+            <span class="n">adj_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bunch</span><span class="p">)</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">adj_nodes</span><span class="p">:</span>
+                    <span class="n">H</span><span class="o">.</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span>
+
+        <span class="n">H</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">return</span> <span class="n">H</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.subgraph_from_matches"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.subgraph_from_matches">[docs]</a>    <span class="k">def</span> <span class="nf">subgraph_from_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a sub-graph where all edges have matches.</span>
+<span class="sd">        (i.e. images with no matches are removed)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        : Object</span>
+<span class="sd">          A networkX graph object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get all edges that have matches</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="s1">&#39;matches&#39;</span><span class="p">)</span> <span class="ow">and</span>
+                   <span class="ow">not</span> <span class="n">edge</span><span class="o">.</span><span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_edge_subgraph</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.filter_nodes"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.filter_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">filter_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters graph and returns a sub-graph from matches. Mimics</span>
+<span class="sd">        python&#39;s filter() function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : function which returns bool used to filter out nodes</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        : Object</span>
+<span class="sd">          A networkX graph object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_node_subgraph</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CandidateGraph.filter_edges"><a class="viewcode-back" href="../../../library/graph/network.html#autocnet.graph.network.CandidateGraph.filter_edges">[docs]</a>    <span class="k">def</span> <span class="nf">filter_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters graph and returns a sub-graph from matches. Mimics</span>
+<span class="sd">        python&#39;s filter() function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : function which returns bool used to filter out edges</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        : Object</span>
+<span class="sd">          A networkX graph object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_edge_subgraph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

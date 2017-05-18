@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>control.control — Control Network &mdash; AutoCNet</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" >
+    <link rel="search" title="Search" href="../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="control — Control" href="index.html" >
+    <link rel="next" title="fileio — File Input/Output" href="../fileio/index.html" >
+    <link rel="prev" title="control — Control" href="index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../index.html" >Library Reference</a></li>
+          <li class="active"><a href="index.html" accesskey="U"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="../fileio/index.html" title="fileio — File Input/Output"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="index.html" title="control — Control"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo">
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../fileio/index.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../_sources/library/control/control.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/library/control/control.rst.rst">Edit page</a>
+</div>
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="control-control-control-network">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">control.control</span></code> &#8212; Control Network<a class="headerlink" href="#control-control-control-network" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">control.control</span></code> module encapsulates a control network class
+that can be used to represent a graph in a single data structure.  This class
+is an integral part of the conversion from a CandidateGraph to an ISIS
+control network</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.control.control"></span><dl class="class">
+<dt id="autocnet.control.control.Correspondence">
+<em class="property">class </em><code class="descclassname">autocnet.control.control.</code><code class="descname">Correspondence</code><span class="sig-paren">(</span><em>id</em>, <em>x</em>, <em>y</em>, <em>measure_type=2</em>, <em>serial=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/control/control.html#Correspondence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.control.control.Correspondence" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single correspondence (image measure).</p>
+<dl class="attribute">
+<dt id="autocnet.control.control.Correspondence.id">
+<code class="descname">id</code><a class="headerlink" href="#autocnet.control.control.Correspondence.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The index of the point in a matches dataframe (stored as an edge attribute)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Correspondence.x">
+<code class="descname">x</code><a class="headerlink" href="#autocnet.control.control.Correspondence.x" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The x coordinate of the measure in image space</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Correspondence.y">
+<code class="descname">y</code><a class="headerlink" href="#autocnet.control.control.Correspondence.y" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The y coordinate of the measure in image space</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Correspondence.measure_type">
+<code class="descname">measure_type</code><a class="headerlink" href="#autocnet.control.control.Correspondence.measure_type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The ISIS measure type as per the protobuf spec</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Correspondence.serial">
+<code class="descname">serial</code><a class="headerlink" href="#autocnet.control.control.Correspondence.serial" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; A unique serial number for the image the measure corresponds to
+In the case of an ISIS cube, this is a valid ISIS serial number,
+else, None.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="autocnet.control.control.CorrespondenceNetwork">
+<em class="property">class </em><code class="descclassname">autocnet.control.control.</code><code class="descname">CorrespondenceNetwork</code><a class="reference internal" href="../../_modules/autocnet/control/control.html#CorrespondenceNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container of points and associated correspondences.  The primary
+data structures are point_to_correspondence and correspondence_to_point.
+These two attributes store the mapping between point and correspondences.</p>
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.point_to_correspondence">
+<code class="descname">point_to_correspondence</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.point_to_correspondence" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; with key equal to an instance of the Point class and
+values equal to a list of Correspondences.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.correspondence_to_point">
+<code class="descname">correspondence_to_point</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.correspondence_to_point" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; with key equal to a correspondence identifier (not the class) and
+value equal to a unique point_id (not an instance of the Point class).
+This attribute serves as a low memory reverse lookup table</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.point_id">
+<code class="descname">point_id</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.point_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The current &#8216;new&#8217; point id if an additional point were to be added</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.n_points">
+<code class="descname">n_points</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.n_points" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of points in the CorrespondenceNetwork</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.n_measures">
+<code class="descname">n_measures</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.n_measures" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of Correspondences in the CorrespondenceNetwork</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.creationdate">
+<code class="descname">creationdate</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.creationdate" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The date the instance of this class was first instantiated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.CorrespondenceNetwork.modifieddata">
+<code class="descname">modifieddata</code><a class="headerlink" href="#autocnet.control.control.CorrespondenceNetwork.modifieddata" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The date this class last had correspondences and/or points added</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="autocnet.control.control.Point">
+<em class="property">class </em><code class="descclassname">autocnet.control.control.</code><code class="descname">Point</code><span class="sig-paren">(</span><em>pid</em>, <em>point_type=2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/control/control.html#Point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.control.control.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>An n-image correspondence container class to store
+information common to all identical correspondences across
+an image set.</p>
+<dl class="attribute">
+<dt id="autocnet.control.control.Point.point_id">
+<code class="descname">point_id</code><a class="headerlink" href="#autocnet.control.control.Point.point_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; A unique identifier for the given point</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Point.subpixel">
+<code class="descname">subpixel</code><a class="headerlink" href="#autocnet.control.control.Point.subpixel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Whether or not the point has been subpixel registered</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Point.point_type">
+<code class="descname">point_type</code><a class="headerlink" href="#autocnet.control.control.Point.point_type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>an ISIS identifier for the type of the point</em> &#8211; as defined in the ISIS protobuf spec.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.control.control.Point.correspondences">
+<code class="descname">correspondences</code><a class="headerlink" href="#autocnet.control.control.Point.correspondences" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; of image correspondences</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

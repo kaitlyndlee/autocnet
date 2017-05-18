@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>cg.cg — Computational Geometry &mdash; AutoCNet</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" >
+    <link rel="search" title="Search" href="../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="cg — Computational Geometry" href="index.html" >
+    <link rel="next" title="control — Control" href="../control/index.html" >
+    <link rel="prev" title="cg — Computational Geometry" href="index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../index.html" >Library Reference</a></li>
+          <li class="active"><a href="index.html" accesskey="U"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="../control/index.html" title="control — Control"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="index.html" title="cg — Computational Geometry"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo">
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../control/index.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../_sources/library/cg/cg.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/library/cg/cg.rst.rst">Edit page</a>
+</div>
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="cg-cg-computational-geometry">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">cg.cg</span></code> &#8212; Computational Geometry<a class="headerlink" href="#cg-cg-computational-geometry" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">cg.cg</span></code> module provides computational geometry methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.cg.cg"></span><dl class="function">
+<dt id="autocnet.cg.cg.convex_hull">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">convex_hull</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#convex_hull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.convex_hull" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>points</strong> (<em>ndarray</em>) &#8211; (n, 2) array of point coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>hull</strong> &#8211; Provides a convex hull that is used
+to determine coverage</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">2-D convex hull</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.convex_hull_ratio">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">convex_hull_ratio</code><span class="sig-paren">(</span><em>points</em>, <em>ideal_area</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#convex_hull_ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.convex_hull_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points</strong> (<em>ndarray</em>) &#8211; (n, 2) array of point coordinates</li>
+<li><strong>ideal_area</strong> (<em>float</em>) &#8211; The total area that could be covered</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ratio</strong> &#8211; The ratio convex hull volume / ideal_area</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.get_area">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">get_area</code><span class="sig-paren">(</span><em>poly1</em>, <em>poly2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#get_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.get_area" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly1</strong> (<em>ogr polygon</em>) &#8211; General ogr polygon</li>
+<li><strong>poly2</strong> (<em>ogr polygon</em>) &#8211; General ogr polygon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>intersection_area</strong> &#8211; returns the intersection area
+of two polygons</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.two_poly_overlap">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">two_poly_overlap</code><span class="sig-paren">(</span><em>poly1</em>, <em>poly2</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#two_poly_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.two_poly_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poly1</strong> (<em>ogr polygon</em>) &#8211; Any polygon that shares some kind of overlap
+with poly2</li>
+<li><strong>poly2</strong> (<em>ogr polygon</em>) &#8211; Any polygon that shares some kind of overlap
+with poly1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>overlap_percn</strong> (<em>float</em>) &#8211; The percentage of image overlap</li>
+<li><strong>overlap_area</strong> (<em>float</em>) &#8211; The total area of overalap</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.cg.cg.vor">
+<code class="descclassname">autocnet.cg.cg.</code><code class="descname">vor</code><span class="sig-paren">(</span><em>edge</em>, <em>clean_keys=[]</em>, <em>s=30</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/cg/cg.html#vor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.cg.cg.vor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a voronoi diagram for an edge using either the coordinate
+transformation or using the homography between source and destination.</p>
+<p>The coordinate transformation uses the footprint of source and destination to
+calculate an intersection between the two images, then transforms the vertices of
+the intersection back into pixel space.</p>
+<p>If a coordinate transform does not exist, use the homography to project the destination image
+onto the source image, producing an area of intersection.</p>
+<p>The intersection vertices are then scaled by a factor of s (default 30), this accounts for the
+areas of the voronoi that would be missed if the scaled vertices were not included into the
+voronoi calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>edge</strong> (<em>object</em>) &#8211; An edge object</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; Of strings used to apply masks to omit correspondences</li>
+<li><strong>s</strong> (<em>int</em>) &#8211; offset for the corners of the image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>vor</strong> (<em>object</em>) &#8211; Scipy Voronoi object</li>
+<li><strong>voronoi_df</strong> (<em>dataframe</em>) &#8211; 3 column pandas dataframe of x, y, and weights</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

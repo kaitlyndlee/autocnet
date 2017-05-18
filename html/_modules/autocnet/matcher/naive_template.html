@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>autocnet.matcher.naive_template &mdash; AutoCNet</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" >
+    <link rel="search" title="Search" href="../../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../../index.html" >
+    <link rel="up" title="Module code" href="../../index.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../../index.html" accesskey="U">Module code</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/favicon.png" alt="Logo">
+            </a></p>
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <h1>Source code for autocnet.matcher.naive_template</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.interpolation</span> <span class="k">import</span> <span class="n">zoom</span>
+
+
+<div class="viewcode-block" id="pattern_match"><a class="viewcode-back" href="../../../library/matcher/naive_template.html#autocnet.matcher.naive_template.pattern_match">[docs]</a><span class="k">def</span> <span class="nf">pattern_match</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">upsampling</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">TM_CCOEFF_NORMED</span><span class="p">,</span> <span class="n">error_check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Call an arbitrary pattern matcher</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    template : ndarray</span>
+<span class="sd">               The input search template used to &#39;query&#39; the destination</span>
+<span class="sd">               image</span>
+
+<span class="sd">    image : ndarray</span>
+<span class="sd">            The image or sub-image to be searched</span>
+
+<span class="sd">    upsampling : int</span>
+<span class="sd">                 The multiplier to upsample the template and image.</span>
+
+<span class="sd">    func : object</span>
+<span class="sd">           The function to be used to perform the template based matching</span>
+<span class="sd">           Options: {cv2.TM_CCORR_NORMED, cv2.TM_CCOEFF_NORMED, cv2.TM_SQDIFF_NORMED}</span>
+<span class="sd">           In testing the first two options perform significantly better with Apollo data.</span>
+
+<span class="sd">    error_check : bool</span>
+<span class="sd">                  If True, also apply a different matcher and test that the values</span>
+<span class="sd">                  are not too divergent.  Default, False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    x : float</span>
+<span class="sd">        The x offset</span>
+
+<span class="sd">    y : float</span>
+<span class="sd">        The y offset</span>
+
+<span class="sd">    strength : float</span>
+<span class="sd">               The strength of the correlation in the range [-1, 1].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">different</span> <span class="o">=</span> <span class="p">{</span><span class="n">cv2</span><span class="o">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TM_CCOEFF_NORMED</span><span class="p">,</span>
+                 <span class="n">cv2</span><span class="o">.</span><span class="n">TM_CCORR_NORMED</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">,</span>
+                 <span class="n">cv2</span><span class="o">.</span><span class="n">TM_CCOEFF_NORMED</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">upsampling</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="n">u_template</span> <span class="o">=</span> <span class="n">zoom</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">upsampling</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">u_image</span> <span class="o">=</span> <span class="n">zoom</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">upsampling</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">u_image</span><span class="p">,</span> <span class="n">u_template</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">min_corr</span><span class="p">,</span> <span class="n">max_corr</span><span class="p">,</span> <span class="n">min_loc</span><span class="p">,</span> <span class="n">max_loc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="o">==</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TM_SQDIFF</span> <span class="ow">or</span> <span class="n">func</span> <span class="o">==</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">min_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Compute the idealized shift (image center)</span>
+    <span class="n">ideal_y</span> <span class="o">=</span> <span class="n">u_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">ideal_x</span> <span class="o">=</span> <span class="n">u_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Compute the shift from template upper left to template center</span>
+    <span class="n">y</span> <span class="o">+=</span> <span class="p">(</span><span class="n">u_template</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">+=</span> <span class="p">(</span><span class="n">u_template</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">ideal_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">upsampling</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">ideal_y</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">upsampling</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">max_corr</span></div>
+</pre></div>
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2015 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on May 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>
