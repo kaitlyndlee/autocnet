@@ -28,7 +28,7 @@
     <link rel="search" title="Search" href="../../search.html" >
     <link rel="top" title="AutoCNet" href="../../index.html" >
     <link rel="up" title="utils — Utility Functions" href="index.html" >
-    <link rel="next" title="utils.evaluation_measures — Statistical Evaluation Measures" href="evaluation_measures.html" >
+    <link rel="next" title="vis — Data Visualization" href="../vis/index.html" >
     <link rel="prev" title="utils — Utility Functions" href="index.html" > 
   </head>
   <body>
@@ -65,7 +65,7 @@
            >modules</a>
       </li>
       <li class="active">
-        <a href="evaluation_measures.html" title="utils.evaluation_measures — Statistical Evaluation Measures"
+        <a href="../vis/index.html" title="vis — Data Visualization"
            accesskey="N">next</a>
       </li>
       <li class="active">
@@ -89,8 +89,8 @@
   <p class="topless"><a href="index.html"
                         title="previous chapter"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="evaluation_measures.html"
-                        title="next chapter"><code class="docutils literal"><span class="pre">utils.evaluation_measures</span></code> &#8212; Statistical Evaluation Measures</a></p>
+  <p class="topless"><a href="../vis/index.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></p>
   <h3>This Page</h3>
   <div>
     <a href="../../_sources/library/utils/utils.rst.txt"
@@ -364,6 +364,27 @@ of points.</td>
 </dd></dl>
 
 <dl class="function">
+<dt id="autocnet.utils.utils.methodispatch">
+<code class="descclassname">autocnet.utils.utils.</code><code class="descname">methodispatch</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#methodispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.methodispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>New dispatch decorator that looks at the second argument to
+avoid self</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>func</strong> (<em>Object</em>) &#8211; Function object to be dispatched</li>
+<li><strong>Returns</strong> &#8211; </li>
+<li><strong>wrapper</strong> (<em>Object</em>) &#8211; Wrapped function call chosen by the dispatcher</li>
+<li><strong>----------</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="autocnet.utils.utils.normalize_vector">
 <code class="descclassname">autocnet.utils.utils.</code><code class="descname">normalize_vector</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#normalize_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.normalize_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize a standard form line</p>
@@ -414,50 +435,6 @@ a copy of the remainder of the array</p>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="autocnet.utils.utils.reproj_corner">
-<code class="descclassname">autocnet.utils.utils.</code><code class="descname">reproj_corner</code><span class="sig-paren">(</span><em>H</em>, <em>corner</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#reproj_corner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.reproj_corner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reproject a pixel in one image into another image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>H</strong> (<em>object</em>) &#8211; (3,3) ndarray or Homography object</li>
-<li><strong>corner</strong> (<em>iterable</em>) &#8211; A 2 element iterable in the form x, y</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="autocnet.utils.utils.scale_point">
-<code class="descclassname">autocnet.utils.utils.</code><code class="descname">scale_point</code><span class="sig-paren">(</span><em>point</em>, <em>centroid</em>, <em>scale</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/utils/utils.html#scale_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.utils.utils.scale_point" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a point, centroid, and a scalar scales the given pointer
-around the given centroid</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>point</strong> (<em>tuple</em>) &#8211; (x, y) coordinates for a given point</li>
-<li><strong>centroid</strong> (<em>tuple</em>) &#8211; (x, y, 0) coordinates for the centroid of a polygon</li>
-<li><strong>scale</strong> (<em>int</em>) &#8211; The multiplier to scale by</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>vector</strong> &#8211; (2, 1) array of the scaled point returned in x, y form</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 
 
@@ -478,10 +455,10 @@ around the given centroid</p>
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

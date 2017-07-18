@@ -164,6 +164,26 @@ matches</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="autocnet.graph.edge.Edge.compute_fundamental_error">
+<code class="descname">compute_fundamental_error</code><span class="sig-paren">(</span><em>clean_keys=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_fundamental_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_fundamental_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a fundamental matrix, compute the reprojective error between
+a two sets of keypoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clean_keys</strong> (<em>list</em>) &#8211; of string keys to masking arrays
+(created by calling outlier detection)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>error</strong> &#8211; of reprojective error indexed to the matches data frame</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pd.Series</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="autocnet.graph.edge.Edge.compute_fundamental_matrix">
 <code class="descname">compute_fundamental_matrix</code><span class="sig-paren">(</span><em>clean_keys=[]</em>, <em>maskname='fundamental'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.compute_fundamental_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.compute_fundamental_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the fundamental matrix (F) using the correspondences tagged to this
@@ -264,7 +284,7 @@ match identified sub-images</p>
 
 <dl class="method">
 <dt id="autocnet.graph.edge.Edge.decompose_and_match">
-<code class="descname">decompose_and_match</code><span class="sig-paren">(</span><em>k=2</em>, <em>maxiteration=3</em>, <em>size=18</em>, <em>buf_dist=3</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.decompose_and_match" title="Permalink to this definition">¶</a></dt>
+<code class="descname">decompose_and_match</code><span class="sig-paren">(</span><em>k=2</em>, <em>overlap=False</em>, <em>maxiteration=3</em>, <em>size=18</em>, <em>buf_dist=3</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.decompose_and_match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Similar to match, this method first decomposed the image into
 $4^{maxiteration}$ subimages and applys matching between each sub-image.</p>
 <p>This method is potential slower than the standard match due to the
@@ -311,7 +331,7 @@ percision errors can results in erroneous partitions.</li>
 
 <dl class="method">
 <dt id="autocnet.graph.edge.Edge.match">
-<code class="descname">match</code><span class="sig-paren">(</span><em>k=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.match" title="Permalink to this definition">¶</a></dt>
+<code class="descname">match</code><span class="sig-paren">(</span><em>k=2</em>, <em>overlap=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#autocnet.graph.edge.Edge.match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given two sets of descriptors, utilize a FLANN (Approximate Nearest
 Neighbor KDTree) matcher to find the k nearest matches.  Nearness is
 the euclidean distance between descriptors.</p>
@@ -324,6 +344,13 @@ the euclidean distance between descriptors.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.edge.Edge.match_overlap">
+<code class="descname">match_overlap</code><span class="sig-paren">(</span><em>k=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/edge.html#Edge.match_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.edge.Edge.match_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two sets of descriptors, apply the matcher with the
+source and destination overlaps.</p>
 </dd></dl>
 
 <dl class="method">
@@ -410,10 +437,10 @@ of the matches dataframe.</li>
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

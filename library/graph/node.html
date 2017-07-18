@@ -205,6 +205,22 @@ keypoints</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="autocnet.graph.node.Node.extract_features_with_downsampling">
+<code class="descname">extract_features_with_downsampling</code><span class="sig-paren">(</span><em>downsample_amount</em>, <em>array_read_args={}</em>, <em>interp='lanczos'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/node.html#Node.extract_features_with_downsampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.node.Node.extract_features_with_downsampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract interest points for the this node (image) by first downsampling,
+then applying the extractor, and then upsampling the results backin to
+true image space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>downsample_amount</strong> (<em>int</em>) &#8211; The amount to downsample by</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="autocnet.graph.node.Node.get_array">
 <code class="descname">get_array</code><span class="sig-paren">(</span><em>band=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/node.html#Node.get_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.node.Node.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a band as a 32-bit numpy array</p>
@@ -321,8 +337,27 @@ from a HDF file.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="autocnet.graph.node.Node.reproject_geom">
+<code class="descname">reproject_geom</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/node.html#Node.reproject_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.node.Node.reproject_geom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reprojects a set of latlon coordinates into pixel space using the nodes
+geodata. These are then returned as a shapely polygon</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>ndarray</em>) &#8211; (n, 2) array of latlon coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A shapely polygon object made using the reprojected coordinates</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="autocnet.graph.node.Node.save_features">
-<code class="descname">save_features</code><span class="sig-paren">(</span><em>out_path</em>, <em>format='npy'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/node.html#Node.save_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.node.Node.save_features" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save_features</code><span class="sig-paren">(</span><em>out_path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/node.html#Node.save_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.node.Node.save_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the extracted keypoints and descriptors to
 the given HDF5 file.  By default, the .npz files are saved
 along side the image, e.g. in the same folder as the image.</p>
@@ -362,10 +397,10 @@ along side the image, e.g. in the same folder as the image.</p>
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

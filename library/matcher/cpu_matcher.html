@@ -26,7 +26,10 @@
     <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" >
     <link rel="search" title="Search" href="../../search.html" >
-    <link rel="top" title="AutoCNet" href="../../index.html" > 
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="matcher — Graph Based Data Representaton" href="index.html" >
+    <link rel="next" title="matcher.cpu_outlier_detector — Finding outliers in both the keypoints and the matches" href="cpu_outlier_detector.html" >
+    <link rel="prev" title="matcher.cpu_extractor — Extracting Features from Images" href="cpu_extractor.html" > 
   </head>
   <body>
 
@@ -46,7 +49,9 @@
     <ul class="nav nav-pills pull-left">
 	
         <li class="active"><a href="../../index.html">AutoCNet</a></li>
-	 
+	
+          <li class="active"><a href="../index.html" >Library Reference</a></li>
+          <li class="active"><a href="index.html" accesskey="U"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li> 
     </ul>
               
               
@@ -58,6 +63,14 @@
       <li class="active">
         <a href="../../py-modindex.html" title="Python Module Index"
            >modules</a>
+      </li>
+      <li class="active">
+        <a href="cpu_outlier_detector.html" title="matcher.cpu_outlier_detector — Finding outliers in both the keypoints and the matches"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="cpu_extractor.html" title="matcher.cpu_extractor — Extracting Features from Images"
+           accesskey="P">previous</a>
       </li>
     </ul>
               
@@ -72,6 +85,12 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/favicon.png" alt="Logo">
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cpu_extractor.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">matcher.cpu_extractor</span></code> &#8212; Extracting Features from Images</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cpu_outlier_detector.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">matcher.cpu_outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></p>
   <h3>This Page</h3>
   <div>
     <a href="../../_sources/library/matcher/cpu_matcher.rst.txt"
@@ -94,6 +113,106 @@
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.1.0.</span></p>
 </div>
+<span class="target" id="module-autocnet.matcher.cpu_matcher"></span><dl class="class">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher">
+<em class="property">class </em><code class="descclassname">autocnet.matcher.cpu_matcher.</code><code class="descname">FlannMatcher</code><span class="sig-paren">(</span><em>flann_parameters={'trees': 3</em>, <em>'algorithm': 1}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#FlannMatcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper to the OpenCV Flann based matcher class that adds
+metadata tracking attributes and methods.  This takes arbitrary
+descriptors and so should be available for use with any
+descriptor data stored as an ndarray.</p>
+<dl class="attribute">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.image_indices">
+<code class="descname">image_indices</code><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.image_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; with key equal to the train image index (returned by the DMatch object),
+e.g. an integer array index
+and value equal to the image identifier, e.g. the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.image_index_counter">
+<code class="descname">image_index_counter</code><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.image_index_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The current number of images loaded into the matcher</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>descriptor</em>, <em>nid</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#FlannMatcher.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a set of descriptors to the matcher and add the image
+index key to the image_indices attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>descriptor</strong> (<em>ndarray</em>) &#8211; The descriptor to be added</li>
+<li><strong>nid</strong> (<em>int</em>) &#8211; The node ids</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#FlannMatcher.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all nodes from the tree and resets
+all counters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>descriptor</em>, <em>query_image</em>, <em>k=3</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#FlannMatcher.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.query" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>descriptor</strong> (<em>ndarray</em>) &#8211; The query descriptor to search for</li>
+<li><strong>query_image</strong> (<em>hashable</em>) &#8211; Key of the query image</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; The number of nearest neighbors to search for</li>
+<li><strong>index</strong> (<em>iterable</em>) &#8211; An iterable of observation indices to utilize for
+the input descriptors</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>matched</strong> &#8211; containing matched points with columns containing:
+matched image name, query index, train index, and
+descriptor distance</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.matcher.cpu_matcher.FlannMatcher.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#FlannMatcher.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.FlannMatcher.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the descriptors, generate the KDTree</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.matcher.cpu_matcher.match">
+<code class="descclassname">autocnet.matcher.cpu_matcher.</code><code class="descname">match</code><span class="sig-paren">(</span><em>self</em>, <em>k=2</em>, <em>overlap=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/matcher/cpu_matcher.html#match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.matcher.cpu_matcher.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two sets of descriptors, utilize a FLANN (Approximate Nearest
+Neighbor KDTree) matcher to find the k nearest matches.  Nearness is
+the euclidean distance between descriptors.</p>
+<p>The matches are then added as an attribute to the edge object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> (<em>int</em>) &#8211; The number of neighbors to find</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -114,10 +233,10 @@
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

@@ -29,7 +29,7 @@
     <link rel="top" title="AutoCNet" href="../../index.html" >
     <link rel="up" title="matcher — Graph Based Data Representaton" href="index.html" >
     <link rel="next" title="matcher.ciratefi — RST-BC Invariant template match algorithm" href="ciratefi.html" >
-    <link rel="prev" title="matcher.outlier_detector — Finding outliers in both the keypoints and the matches" href="outlier_detector.html" > 
+    <link rel="prev" title="matcher.cuda_outlier_detector — Finding outliers in both the keypoints and the matches" href="cuda_outlier_detector.html" > 
   </head>
   <body>
 
@@ -69,7 +69,7 @@
            accesskey="N">next</a>
       </li>
       <li class="active">
-        <a href="outlier_detector.html" title="matcher.outlier_detector — Finding outliers in both the keypoints and the matches"
+        <a href="cuda_outlier_detector.html" title="matcher.cuda_outlier_detector — Finding outliers in both the keypoints and the matches"
            accesskey="P">previous</a>
       </li>
     </ul>
@@ -86,8 +86,8 @@
               <img class="logo" src="../../_static/favicon.png" alt="Logo">
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="outlier_detector.html"
-                        title="previous chapter"><code class="docutils literal"><span class="pre">matcher.outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></p>
+  <p class="topless"><a href="cuda_outlier_detector.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">matcher.cuda_outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="ciratefi.html"
                         title="next chapter"><code class="docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm</a></p>
@@ -126,7 +126,7 @@ centered on some pixel at some size.</p>
 <li><strong>img</strong> (<em>ndarray</em><em> or </em><em>object</em>) &#8211; The input image to be clipped or an object
 with a read_array method that takes a pixels
 argument in the form [xstart, ystart, xstop, ystop]</li>
-<li><strong>center</strong> (<em>tuple</em>) &#8211; (y,x) coordinates to center the roi</li>
+<li><strong>center</strong> (<em>tuple</em>) &#8211; (x,y) coordinates to center the roi</li>
 <li><strong>img_size</strong> (<em>int</em>) &#8211; Odd, total image size</li>
 </ul>
 </td>
@@ -188,10 +188,10 @@ compute an x and y offset from the search keypoint to the template keypoint and 
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

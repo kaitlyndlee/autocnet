@@ -174,6 +174,26 @@ If func is not an attribute of Edge, raises AttributeError</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="autocnet.graph.network.CandidateGraph.compute_cliques">
+<code class="descname">compute_cliques</code><span class="sig-paren">(</span><em>node_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.compute_cliques"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.compute_cliques" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes all maximum complete subgraphs for the given graph.
+If a node_id is given, method will return only the complete subgraphs that
+contain that node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_id</strong> (<em>int</em>) &#8211; Integer value for a given node</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of lists of node ids that make up maximum complete subgraphs of the given graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="autocnet.graph.network.CandidateGraph.compute_clusters">
 <code class="descname">compute_clusters</code><span class="sig-paren">(</span><em>func=&lt;function mcl&gt;</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.compute_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.compute_clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply some graph clustering algorithm to compute a subset of the global
@@ -200,7 +220,7 @@ Markov Clustering Algorithm</li>
 <dd><p>Compute fundmental matrices for all edges using identical parameters</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.outlier_detector.compute_fundamental_matrix()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.cpu_outlier_detector.compute_fundamental_matrix()</span></code></p>
 </div>
 </dd></dl>
 
@@ -210,8 +230,35 @@ Markov Clustering Algorithm</li>
 <dd><p>Compute homographies for all edges using identical parameters</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="edge.html#autocnet.graph.edge.Edge.compute_homography" title="autocnet.graph.edge.Edge.compute_homography"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.graph.edge.Edge.compute_homography()</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.outlier_detector.compute_homography()</span></code></p>
+<p class="last"><a class="reference internal" href="edge.html#autocnet.graph.edge.Edge.compute_homography" title="autocnet.graph.edge.Edge.compute_homography"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.graph.edge.Edge.compute_homography()</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.cpu_outlier_detector.compute_homography()</span></code></p>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.network.CandidateGraph.compute_intersection">
+<code class="descname">compute_intersection</code><span class="sig-paren">(</span><em>source</em>, <em>clean_keys=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.compute_intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.compute_intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the intercetion of all images in a graph
+based around a given source node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>source</strong> (<em>object</em><em> or </em><em>int</em>) &#8211; Either a networkx Node object or an integer</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; Strings used to apply masks to omit correspondences</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>intersect_gdf</strong> &#8211; A geopandas dataframe of intersections for all images
+that overlap with the source node. Also includes the common
+overlap for all images in the source node.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -240,6 +287,25 @@ where letters indicate node identifiers</td>
 <span class="go">[(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)]</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.network.CandidateGraph.compute_weight">
+<code class="descname">compute_weight</code><span class="sig-paren">(</span><em>clean_keys</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.compute_weight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.compute_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a voronoi weight for each edge in a given graph.
+Can function as is, but is slightly optimized for complete subgraphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; keyword arguments that get passed to compute_voronoi</li>
+<li><strong>clean_keys</strong> (<em>list</em>) &#8211; Strings used to apply masks to omit correspondences</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -331,19 +397,23 @@ rectangle (mbr) in pixel space.</p>
 
 <dl class="method">
 <dt id="autocnet.graph.network.CandidateGraph.extract_features">
-<code class="descname">extract_features</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.extract_features" title="Permalink to this definition">¶</a></dt>
+<code class="descname">extract_features</code><span class="sig-paren">(</span><em>band=1</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.extract_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts features from each image in the graph and uses the result to assign the
 node attributes for &#8216;handle&#8217;, &#8216;image&#8217;, &#8216;keypoints&#8217;, and &#8216;descriptors&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="autocnet.graph.network.CandidateGraph.extract_features_with_downsampling">
+<code class="descname">extract_features_with_downsampling</code><span class="sig-paren">(</span><em>downsample_amount=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.extract_features_with_downsampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.extract_features_with_downsampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract interest points from a downsampled array.  The array is downsampled
+by the downsample_amount keyword using the Lanconz downsample amount.  If the
+downsample keyword is not supplied, compute a downsampling constant as the
+total array size divided by the network maxsize attribute.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>method</strong> (<em>{'orb'</em><em>, </em><em>'sift'</em><em>, </em><em>'fast'}</em>) &#8211; The descriptor method to be used</li>
-<li><strong>extractor_parameters</strong> (<em>dict</em>) &#8211; A dictionary containing OpenCV SIFT parameters names and values.</li>
-<li><strong>downsampling</strong> (<em>int</em>) &#8211; The divisor to image_size to down sample the input image.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>downsample_amount</strong> (<em>int</em>) &#8211; The amount of downsampling to apply to the image</td>
 </tr>
 </tbody>
 </table>
@@ -478,6 +548,12 @@ input images. Currently only images with this information are supported.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="autocnet.graph.network.CandidateGraph.is_complete">
+<code class="descname">is_complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.is_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.is_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the graph is a complete graph</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="autocnet.graph.network.CandidateGraph.island_nodes">
 <code class="descname">island_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/graph/network.html#CandidateGraph.island_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.graph.network.CandidateGraph.island_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds single nodes that are completely disconnected from the rest of the graph</p>
@@ -592,7 +668,7 @@ the markov clustering algorithm</p>
 <dd><p>Apply a ratio check to all edges in the graph</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.outlier_detector.DistanceRatio.compute()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.cpu_outlier_detector.DistanceRatio.compute()</span></code></p>
 </div>
 </dd></dl>
 
@@ -677,7 +753,7 @@ as a weight.  If None, then each edge has weight 1.</td>
 <dd><p>Apply a metric of point suppression to the graph</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.outlier_detector.SpatialSuppression()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">autocnet.matcher.cpu_outlier_detector.SpatialSuppression()</span></code></p>
 </div>
 </dd></dl>
 
@@ -725,10 +801,10 @@ as a weight.  If None, then each edge has weight 1.</td>
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

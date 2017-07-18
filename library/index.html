@@ -82,17 +82,6 @@
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/favicon.png" alt="Logo">
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Library Reference</a><ul>
-<li><a class="reference internal" href="#autocnet">AutoCNet</a><ul>
-<li><a class="reference internal" href="#sub-packages">Sub-packages</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
   <p class="topless"><a href="../users/tutorials/apollopan/Advanced 1. Extending the CandidateGraph.html"
                         title="previous chapter">Advanced: Extending the Control Network</a></p>
@@ -123,28 +112,76 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.0</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">May 18, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Jul 18, 2017</td>
 </tr>
 </tbody>
 </table>
-<div class="section" id="autocnet">
-<h2>AutoCNet<a class="headerlink" href="#autocnet" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="sub-packages">
-<h3>Sub-packages<a class="headerlink" href="#sub-packages" title="Permalink to this headline">¶</a></h3>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a></li>
-<li class="toctree-l1"><a class="reference internal" href="matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spectral/index.html"><code class="docutils literal"><span class="pre">spectral</span></code> &#8212; Multi and Hyper-Spectral Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cg/cg.html"><code class="docutils literal"><span class="pre">cg.cg</span></code> &#8212; Computational Geometry</a></li>
 </ul>
-</div>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="control/control.html"><code class="docutils literal"><span class="pre">control.control</span></code> &#8212; Control Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graph/network.html"><code class="docutils literal"><span class="pre">graph.network</span></code> &#8212; Network File Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graph/node.html"><code class="docutils literal"><span class="pre">graph.node</span></code> &#8212; Network Node Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graph/edge.html"><code class="docutils literal"><span class="pre">graph.edge</span></code> &#8212; Network Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graph/markov_cluster.html"><code class="docutils literal"><span class="pre">graph.markov_cluster</span></code> &#8212; Markov Clustering Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matcher/index.html#cpu-based-feature-extraction-and-matching">CPU Based Feature Extraction and Matching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cpu_extractor.html"><code class="docutils literal"><span class="pre">matcher.cpu_extractor</span></code> &#8212; Extracting Features from Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cpu_matcher.html"><code class="docutils literal"><span class="pre">matcher.cpu_matcher</span></code> &#8212; CPU Based n-Keypoint Matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cpu_outlier_detector.html"><code class="docutils literal"><span class="pre">matcher.cpu_outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matcher/index.html#cuda-based-feature-extraction-and-matching">CUDA Based Feature Extraction and Matching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cuda_extractor.html"><code class="docutils literal"><span class="pre">matcher.cuda_extractor</span></code> &#8212; GPU Based n-Feature Extractor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cuda_matcher.html"><code class="docutils literal"><span class="pre">matcher.cuda_matcher</span></code> &#8212; GPU Based n-Keypoint Matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/cuda_outlier_detector.html"><code class="docutils literal"><span class="pre">matcher.cuda_outlier_detector</span></code> &#8212; Finding outliers in both the keypoints and the matches</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matcher/index.html#subpixel-refinement">Subpixel Refinement</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matcher/subpixel.html"><code class="docutils literal"><span class="pre">matcher.subpixel</span></code> &#8212; Performing subpixel registration between images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/ciratefi.html"><code class="docutils literal"><span class="pre">matcher.ciratefi</span></code> &#8212; RST-BC Invariant template match algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matcher/naive_template.html"><code class="docutils literal"><span class="pre">matcher.naive_template</span></code> &#8212; Simple template matching</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matcher/index.html#spatial-suppression-function-examples">Spatial Suppression Function Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matcher/suppression_funcs.html"><code class="docutils literal"><span class="pre">matcher.suppression_funcs</span></code> &#8212; Pre-Generated Generic Suppression Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transformation/index.html#reprojection-transformations">Reprojection Transformations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transformation/homography.html"><code class="docutils literal"><span class="pre">transformation.homography</span></code> &#8212; Homographies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transformation/fundamental.html"><code class="docutils literal"><span class="pre">transformation.fundamental_matrix</span></code> &#8212; Fundamental Matrices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transformation/index.html#image-decomposition">Image Decomposition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="transformation/decompose.html"><code class="docutils literal"><span class="pre">transformation.decompose</span></code> &#8212; Coupled Decomposition</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils/utils.html"><code class="docutils literal"><span class="pre">utils.utils</span></code> &#8212; Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vis/graph_view.html"><code class="docutils literal"><span class="pre">vis.graph_view</span></code> &#8212; Graph Visualization</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 
@@ -166,10 +203,10 @@
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

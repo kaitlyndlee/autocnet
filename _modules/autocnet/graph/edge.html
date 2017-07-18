@@ -83,18 +83,20 @@
           <div class="body" id="spc-section-body">
             
   <h1>Source code for autocnet.graph.edge</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">singledispatch</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableMapping</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">cdist</span>
 
 <span class="kn">import</span> <span class="nn">autocnet</span>
+<span class="kn">from</span> <span class="nn">autocnet.graph.node</span> <span class="k">import</span> <span class="n">Node</span>
 <span class="kn">from</span> <span class="nn">autocnet.utils</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">autocnet.matcher</span> <span class="k">import</span> <span class="n">outlier_detector</span> <span class="k">as</span> <span class="n">od</span>
+<span class="kn">from</span> <span class="nn">autocnet.matcher</span> <span class="k">import</span> <span class="n">cpu_outlier_detector</span> <span class="k">as</span> <span class="n">od</span>
 <span class="kn">from</span> <span class="nn">autocnet.matcher</span> <span class="k">import</span> <span class="n">suppression_funcs</span> <span class="k">as</span> <span class="n">spf</span>
 <span class="kn">from</span> <span class="nn">autocnet.matcher</span> <span class="k">import</span> <span class="n">subpixel</span> <span class="k">as</span> <span class="n">sp</span>
 <span class="kn">from</span> <span class="nn">autocnet.transformation</span> <span class="k">import</span> <span class="n">fundamental_matrix</span> <span class="k">as</span> <span class="n">fm</span>
@@ -129,6 +131,7 @@
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;fundamental_matrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">matches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">masks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;source_mbr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;destin_mbr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -163,22 +166,11 @@
 <span class="sd">    def masks(self):</span>
 <span class="sd">        mask_lookup = {&#39;fundamental&#39;: &#39;fundamental_matrix&#39;}</span>
 <span class="sd">        if not hasattr(self, &#39;_masks&#39;):</span>
-<span class="sd">            if self.matches is not None:</span>
+<span class="sd">            if isinstance(self.matches, pd.DataFrame):</span>
 <span class="sd">                self._masks = pd.DataFrame(True, columns=[&#39;symmetry&#39;],</span>
 <span class="sd">                                           index=self.matches.index)</span>
 <span class="sd">            else:</span>
 <span class="sd">                self._masks = pd.DataFrame()</span>
-<span class="sd">        # If the mask is coming form another object that tracks</span>
-<span class="sd">        # state, dynamically draw the mask from the object.</span>
-<span class="sd">        for c in self._masks.columns:</span>
-<span class="sd">            if c in mask_lookup:</span>
-<span class="sd">                try:</span>
-<span class="sd">                    truncated_mask = getattr(self, mask_lookup[c]).mask</span>
-<span class="sd">                    self._masks[c] = False</span>
-<span class="sd">                    self._masks[c].iloc[truncated_mask.index] = truncated_mask</span>
-<span class="sd">                except Exception:</span>
-<span class="sd">                    #TODO: Get rid of state</span>
-<span class="sd">                    pass</span>
 <span class="sd">        return self._masks</span>
 
 <span class="sd">    @masks.setter</span>
@@ -200,8 +192,21 @@
 <span class="sd">        ----------</span>
 <span class="sd">        k : int</span>
 <span class="sd">            The number of neighbors to find</span>
+
+<span class="sd">        overlap : boolean</span>
+<span class="sd">                  Apply the matcher only to the overlapping area defined by</span>
+<span class="sd">                  the source_mbr and destin_mbr attributes (stored in the</span>
+<span class="sd">                  edge dict).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
+
+<div class="viewcode-block" id="Edge.match_overlap"><a class="viewcode-back" href="../../../library/graph/edge.html#autocnet.graph.edge.Edge.match_overlap">[docs]</a>    <span class="k">def</span> <span class="nf">match_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given two sets of descriptors, apply the matcher with the</span>
+<span class="sd">        source and destination overlaps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;source_mbr&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;destin_mbr&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="n">overlaps</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Edge.decompose"><a class="viewcode-back" href="../../../library/graph/edge.html#autocnet.graph.edge.Edge.decompose">[docs]</a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -213,28 +218,28 @@
     <span class="k">def</span> <span class="nf">decompose_and_match</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">extract_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">compute_overlap</span><span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    def extract_subset(self, *args, **kwargs):</span>
+<span class="sd">        self.compute_overlap()</span>
 
-        <span class="c1"># Extract the source</span>
-        <span class="n">minx</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxy</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;source_mbr&#39;</span><span class="p">]</span>
-        <span class="n">xystart</span> <span class="o">=</span> <span class="p">(</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">)</span>
-        <span class="n">pixels</span><span class="o">=</span><span class="p">[</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="o">-</span><span class="n">minx</span><span class="p">,</span> <span class="n">maxy</span><span class="o">-</span><span class="n">miny</span><span class="p">]</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">read_array</span><span class="p">(</span><span class="n">pixels</span><span class="o">=</span><span class="n">pixels</span><span class="p">)</span>
-        <span class="n">node</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">xystart</span><span class="o">=</span><span class="n">xystart</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="sd">        # Extract the source</span>
+<span class="sd">        minx, maxx, miny, maxy = self[&#39;source_mbr&#39;]</span>
+<span class="sd">        xystart = (minx, miny)</span>
+<span class="sd">        pixels=[minx, miny, maxx-minx, maxy-miny]</span>
+<span class="sd">        node = self.source</span>
+<span class="sd">        arr = node.geodata.read_array(pixels=pixels)</span>
+<span class="sd">        node.extract_features(arr, xystart=xystart, *args, **kwargs)</span>
 
-        <span class="c1"># Extract the destination</span>
-        <span class="n">minx</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxy</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;destin_mbr&#39;</span><span class="p">]</span>
-        <span class="n">xystart</span> <span class="o">=</span> <span class="p">(</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">)</span>
-        <span class="n">pixels</span><span class="o">=</span><span class="p">[</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="o">-</span><span class="n">minx</span><span class="p">,</span> <span class="n">maxy</span><span class="o">-</span><span class="n">miny</span><span class="p">]</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destination</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">read_array</span><span class="p">(</span><span class="n">pixels</span><span class="o">=</span><span class="n">pixels</span><span class="p">)</span>
-        <span class="n">node</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">xystart</span><span class="o">=</span><span class="n">xystart</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>        
-
+<span class="sd">        # Extract the destination</span>
+<span class="sd">        minx, maxx, miny, maxy = self[&#39;destin_mbr&#39;]</span>
+<span class="sd">        xystart = (minx, miny)</span>
+<span class="sd">        pixels=[minx, miny, maxx-minx, maxy-miny]</span>
+<span class="sd">        node = self.destination</span>
+<span class="sd">        arr = node.geodata.read_array(pixels=pixels)</span>
+<span class="sd">        node.extract_features(arr, xystart=xystart, *args, **kwargs)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">symmetry_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">masks</span><span class="p">[</span><span class="s1">&#39;symmetry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">od</span><span class="o">.</span><span class="n">mirroring_test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">)</span>
-
 
     <span class="k">def</span> <span class="nf">ratio_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_keys</span><span class="o">=</span><span class="p">[],</span> <span class="n">maskname</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">matches</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">clean_keys</span><span class="p">)</span>
@@ -263,10 +268,8 @@
         <span class="n">matches</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">clean_keys</span><span class="p">)</span>
 
         <span class="c1"># TODO: Homogeneous is horribly inefficient here, use Numpy array notation</span>
-        <span class="n">s_keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">],</span>
-                                                                 <span class="n">homogeneous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">d_keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">],</span>
-                                                                <span class="n">homogeneous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">s_keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_keypoints</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">])</span>
+        <span class="n">d_keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_keypoints</span><span class="p">(</span><span class="s1">&#39;destination&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">])</span>
 
 
         <span class="c1"># Replace the index with the matches index.</span>
@@ -281,6 +284,48 @@
 
             <span class="c1"># Set the initial state of the fundamental mask in the masks</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">masks</span><span class="p">[</span><span class="n">maskname</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span></div>
+
+    <span class="nd">@utils</span><span class="o">.</span><span class="n">methodispatch</span>
+    <span class="k">def</span> <span class="nf">get_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">homogeneous</span><span class="o">=</span><span class="n">homogeneous</span><span class="p">)</span>
+
+    <span class="nd">@get_keypoints</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">homogeneous</span><span class="o">=</span><span class="n">homogeneous</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Edge.compute_fundamental_error"><a class="viewcode-back" href="../../../library/graph/edge.html#autocnet.graph.edge.Edge.compute_fundamental_error">[docs]</a>    <span class="k">def</span> <span class="nf">compute_fundamental_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_keys</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a fundamental matrix, compute the reprojective error between</span>
+<span class="sd">        a two sets of keypoints.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        clean_keys : list</span>
+<span class="sd">                     of string keys to masking arrays</span>
+<span class="sd">                     (created by calling outlier detection)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : pd.Series</span>
+<span class="sd">                of reprojective error indexed to the matches data frame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;fundamental_matrix&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;No fundamental matrix has been compute for this edge.&#39;</span><span class="p">)</span>
+        <span class="n">matches</span><span class="p">,</span> <span class="n">masks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">clean_keys</span><span class="p">)</span>
+
+        <span class="n">source_kps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;source_idx&#39;</span><span class="p">])</span>
+        <span class="n">destination_kps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">get_keypoint_coordinates</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;destination_idx&#39;</span><span class="p">])</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">compute_fundamental_error</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;fundamental_matrix&#39;</span><span class="p">],</span> <span class="n">source_kps</span><span class="p">,</span> <span class="n">destination_kps</span><span class="p">)</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">error</span></div>
 
 <div class="viewcode-block" id="Edge.compute_homography"><a class="viewcode-back" href="../../../library/graph/edge.html#autocnet.graph.edge.Edge.compute_homography">[docs]</a>    <span class="k">def</span> <span class="nf">compute_homography</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ransac&#39;</span><span class="p">,</span> <span class="n">clean_keys</span><span class="o">=</span><span class="p">[],</span> <span class="n">pid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maskname</span><span class="o">=</span><span class="s1">&#39;homography&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -348,10 +393,9 @@
 <span class="sd">                      The maximum (positive) value that a pixel can shift in the y direction</span>
 <span class="sd">                      without being considered an outlier</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span>
         <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;x_offset&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;y_offset&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;correlation&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
 
         <span class="c1"># Build up a composite mask from all of the user specified masks</span>
         <span class="n">matches</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">clean_keys</span><span class="p">)</span>
@@ -379,19 +423,17 @@
             <span class="n">d_search</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">clip_roi</span><span class="p">(</span><span class="n">d_img</span><span class="p">,</span> <span class="n">d_keypoint</span><span class="p">,</span> <span class="n">search_size</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">strength</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">subpixel_offset</span><span class="p">(</span><span class="n">s_template</span><span class="p">,</span> <span class="n">d_search</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;x_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;y_offset&#39;</span><span class="p">,</span>
-                                       <span class="s1">&#39;correlation&#39;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">strength</span><span class="p">,</span> <span class="n">source_image</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;x_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;y_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;correlation&#39;</span><span class="p">,</span> <span class="s1">&#39;reference&#39;</span><span class="p">)]</span><span class="o">=</span> <span class="p">[</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">strength</span><span class="p">,</span> <span class="n">source_image</span><span class="p">]</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Template-Search size mismatch, failing for this correspondence point.&#39;</span><span class="p">)</span>
 
         <span class="c1"># Compute the mask for correlations less than the threshold</span>
-        <span class="n">threshold_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
+        <span class="n">threshold_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
 
         <span class="c1"># Compute the mask for the point shifts that are too large</span>
-        <span class="n">query_string</span> <span class="o">=</span> <span class="s1">&#39;x_offset &lt;= -</span><span class="si">{0}</span><span class="s1"> or x_offset &gt;= </span><span class="si">{0}</span><span class="s1"> or y_offset &lt;= -</span><span class="si">{1}</span><span class="s1"> or y_offset &gt;= </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_x_shift</span><span class="p">,</span>
-                                                                                                           <span class="n">max_y_shift</span><span class="p">)</span>
-        <span class="n">sp_shift_outliers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
-        <span class="n">shift_mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="s1">&#39;x_offset &lt;= -</span><span class="si">{0}</span><span class="s1"> or x_offset &gt;= </span><span class="si">{0}</span><span class="s1"> or y_offset &lt;= -</span><span class="si">{1}</span><span class="s1"> or y_offset &gt;= </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_x_shift</span><span class="p">,</span><span class="n">max_y_shift</span><span class="p">)</span>
+        <span class="n">sp_shift_outliers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
+        <span class="n">shift_mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subpixel_matches</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">shift_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sp_shift_outliers</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Generate the composite mask and write the masks to the mask data structure</span>
@@ -420,7 +462,7 @@
 <span class="sd">                     of mask keys to be used to reduce the total size</span>
 <span class="sd">                     of the matches dataframe.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;matches&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;This edge does not yet have any matches computed.&#39;</span><span class="p">)</span>
 
         <span class="n">matches</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">clean_keys</span><span class="p">)</span>
@@ -550,12 +592,10 @@
 <span class="sd">                     Of strings used to apply masks to omit correspondences</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Matches have not been computed for this edge&#39;</span><span class="p">)</span>
         <span class="n">voronoi</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">vor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_keys</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">matches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">,</span> <span class="n">voronoi</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;vor_weights&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
-
-
 
 <div class="viewcode-block" id="Edge.compute_overlap"><a class="viewcode-back" href="../../../library/graph/edge.html#autocnet.graph.edge.Edge.compute_overlap">[docs]</a>    <span class="k">def</span> <span class="nf">compute_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -582,10 +622,10 @@
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

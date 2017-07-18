@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>Getting Started with AutoCNet &mdash; AutoCNet</title>
+    <title>Working With Apollo Pan &mdash; AutoCNet</title>
     
     <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
@@ -27,7 +27,7 @@
     <link rel="index" title="Index" href="../../genindex.html" >
     <link rel="search" title="Search" href="../../search.html" >
     <link rel="top" title="AutoCNet" href="../../index.html" >
-    <link rel="up" title="User Guide" href="../index.html" >
+    <link rel="up" title="&lt;no title&gt;" href="../index.html" >
     <link rel="next" title="Creating the CandidateGraph Object" href="apollopan/1. Creating the CandidateGraph Object.html" >
     <link rel="prev" title="Install AutoCNet" href="../installation.html" > 
   </head>
@@ -50,7 +50,7 @@
 	
         <li class="active"><a href="../../index.html">AutoCNet</a></li>
 	
-          <li class="active"><a href="../index.html" accesskey="U">User Guide</a></li> 
+          <li class="active"><a href="../index.html" accesskey="U">&lt;no title&gt;</a></li> 
     </ul>
               
               
@@ -106,96 +106,27 @@
         <div class="bodywrapper">
           <div class="body" id="spc-section-body">
             
-  <div class="section" id="getting-started-with-autocnet">
-<h1>Getting Started with AutoCNet<a class="headerlink" href="#getting-started-with-autocnet" title="Permalink to this headline">¶</a></h1>
-<p>Here we provide a number of tutorials, presented in increasing complexity, designed to walk through the use of Autocnet.
+  <p>Here we provide a number of tutorials, presented in increasing complexity, designed to walk through the use of Autocnet.
 Some of the data is stored remotely (due to the size).  In these cases the tutorial provides links to download the data.
 All tutorials are rendered in plain text in the documentation, but are available for interactive use by cloning our github
 repository at &lt;<a class="reference external" href="https://github.com/USGS-Astrogeology/autocnet">https://github.com/USGS-Astrogeology/autocnet</a>&gt;_.</p>
+<div class="section" id="working-with-apollo-pan">
+<h1>Working With Apollo Pan<a class="headerlink" href="#working-with-apollo-pan" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/1. Creating the CandidateGraph Object.html#Which-Apollo-Pan-images?">Which Apollo Pan images?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/1. Creating the CandidateGraph Object.html#Graph">Graph</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html"> Extracting Keypoints (Interest Points)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Candidate-Graph">Candidate Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Enable-GPU-use">Enable GPU use</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Aside:-AutoCNet-as-a-library">Aside: AutoCNet as a library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Images-that-are-too-large">Images that are too large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Parameterization-&amp;-Result-Visualization">Parameterization &amp; Result Visualization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html#Repeat-for-the-other-array">Repeat for the other array</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/3. Matching.html"> Matching</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/3. Matching.html#CandidateGraph--&gt;-Custom-Extraction-Func--&gt;-Matching">CandidateGraph -&gt; Custom Extraction Func -&gt; Matching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/3. Matching.html#The-matches-DataFrame">The matches DataFrame</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/3. Matching.html#Position,-Ambiguity,-and-Score">Position, Ambiguity, and Score</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html"> Fundamental Matrix</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html#CandidateGraph--&gt;-Custom-Extraction-Func--&gt;-Matching">CandidateGraph -&gt; Custom Extraction Func -&gt; Matching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html#Fundamental-Matrix">Fundamental Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html#Visualization-of-reprojective-error">Visualization of reprojective error</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html#Initial-Conclusion">Initial Conclusion</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html#CandidateGraph--&gt;-Custom-Extraction-Func--&gt;-Matching--&gt;-Coupled-Decomposition">CandidateGraph -&gt; Custom Extraction Func -&gt; Matching -&gt; Coupled Decomposition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html#Coupled-Decomposition">Coupled Decomposition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html#Failure-&amp;-Solution">Failure &amp; Solution</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html#CandidateGraph--&gt;-Custom-Extraction-Func--&gt;-Matching--&gt;-Coupled-Decomposition">CandidateGraph -&gt; Custom Extraction Func -&gt; Matching -&gt; Coupled Decomposition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html#Checking-the-Results">Checking the Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html#Extension">Extension</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html#Checking-Again">Checking Again</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/5c. Coupled Decomposition - Part III.html#Preprocessing">Preprocessing</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html#Create-the-CandidateGraph">Create the CandidateGraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html#Match-and-Find-Outliers">Match and Find Outliers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html#Subpixel-Refinement">Subpixel Refinement</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html#Create-the-CandidateGraph">Create the CandidateGraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html#Match-and-Find-Outliers">Match and Find Outliers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html#Subpixel-Refinement">Subpixel Refinement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html#Subpixel-Results">Subpixel Results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/7. Saving and Loading.html"> Saving and Loadin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/7. Saving and Loading.html#Create-the-CandidateGraph">Create the CandidateGraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/7. Saving and Loading.html#Saving-and-Loading">Saving and Loading</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html#Create-the-CandidateGraph">Create the CandidateGraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html#Fundamental-Matrix">Fundamental Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html#Option-1:">Option 1:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/9. Creating a Control Network.html"> Creating a Control Network</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/9. Creating a Control Network.html#Create-the-CandidateGraph">Create the CandidateGraph</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html"> Advanced: Extending the CandidateGraph</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#The-CandidateGraph">The CandidateGraph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#Extraction">Extraction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#Why-do-this?">Why do this?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#Matching">Matching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#Masks">Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#More-Masks">More Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html#More-built-ins">More built-ins</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/1. Creating the CandidateGraph Object.html"> Creating the CandidateGraph Object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/2. Extracting Keypoints (Interest Points).html"> Extracting Keypoints (Interest Points)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/3. Matching.html"> Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/4. Fundamental Matrix.html"> Fundamental Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/5a. Coupled Decomposition - Part I.html"> Coupled Decomposition - Part I</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/5b. Coupled Decomposition - Part II.html"> Coupled Decomposition - Part II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/5c. Coupled Decomposition - Part III.html"> Coupled Decomposition - Part III</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/6a. Subpixel Matching - Part I.html"> Subpixel Matching - Part I</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/6b. Subpixel Matching - Part II.html"> Subpixel Matching - Part II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/7. Saving and Loading.html"> Saving and Loadin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/8. Adding Correspondences Using Constraints.html"> Adding Correspondences Using Constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/9. Creating a Control Network.html"> Creating a Control Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apollopan/Advanced 1. Extending the CandidateGraph.html"> Advanced: Extending the CandidateGraph</a></li>
 </ul>
 </div>
 </div>
@@ -218,10 +149,10 @@ repository at &lt;<a class="reference external" href="https://github.com/USGS-As
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.

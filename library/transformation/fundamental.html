@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>transformation.fundamental_matrix — Fundamental Matrices &mdash; AutoCNet</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" >
+    <link rel="search" title="Search" href="../../search.html" >
+    <link rel="top" title="AutoCNet" href="../../index.html" >
+    <link rel="up" title="transformation — Transformation Objects" href="index.html" >
+    <link rel="next" title="transformation.decompose — Coupled Decomposition" href="decompose.html" >
+    <link rel="prev" title="transformation.homography — Homographies" href="homography.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../../index.html">AutoCNet</a></li>
+	
+          <li class="active"><a href="../index.html" >Library Reference</a></li>
+          <li class="active"><a href="index.html" accesskey="U"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="decompose.html" title="transformation.decompose — Coupled Decomposition"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="homography.html" title="transformation.homography — Homographies"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/favicon.png" alt="Logo">
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="homography.html"
+                        title="previous chapter"><code class="docutils literal"><span class="pre">transformation.homography</span></code> &#8212; Homographies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="decompose.html"
+                        title="next chapter"><code class="docutils literal"><span class="pre">transformation.decompose</span></code> &#8212; Coupled Decomposition</a></p>
+  <h3>This Page</h3>
+  <div>
+    <a href="../../_sources/library/transformation/fundamental.rst.txt"
+       rel="nofollow">Show Source</a>
+  </div>
+<div class="this-page-menu">
+  <a href="/scipy/docs/scipy-docs/library/transformation/fundamental.rst.rst">Edit page</a>
+</div>
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="transformation-fundamental-matrix-fundamental-matrices">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">transformation.fundamental_matrix</span></code> &#8212; Fundamental Matrices<a class="headerlink" href="#transformation-fundamental-matrix-fundamental-matrices" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-mod docutils literal"><span class="pre">transformation.fundamental_matrix</span></code> module contains methods for computing the fundamental matrix between two images and assessing error.  The fundamental matrix defines the projection from a point in one image to an epipolar line in the other.  This module supports multiple methods for F matrix computation.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+<span class="target" id="module-autocnet.transformation.fundamental_matrix"></span><dl class="function">
+<dt id="autocnet.transformation.fundamental_matrix.compute_fundamental_error">
+<code class="descclassname">autocnet.transformation.fundamental_matrix.</code><code class="descname">compute_fundamental_error</code><span class="sig-paren">(</span><em>F</em>, <em>x</em>, <em>x1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/transformation/fundamental_matrix.html#compute_fundamental_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.transformation.fundamental_matrix.compute_fundamental_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the fundamental error using the idealized error metric.</p>
+<p>Ideal error is defined by $x^{intercal}Fx = 0$,
+where $x$ are all matchpoints in a given image and
+$x^{intercal}F$ defines the standard form of the
+epipolar line in the second image.</p>
+<p>This method assumes that x and x1 are ordered such that x[0]
+correspondes to x1[0].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>F</strong> (<em>ndarray</em>) &#8211; (3,3) Fundamental matrix</li>
+<li><strong>x</strong> (<em>arraylike</em>) &#8211; (n,2) or (n,3) array of homogeneous coordinates</li>
+<li><strong>x1</strong> (<em>arraylike</em>) &#8211; (n,2) or (n,3) array of homogeneous coordinates with the same
+length as argument x</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>F_error</strong> &#8211; n,1 vector of reprojection errors</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.transformation.fundamental_matrix.compute_fundamental_matrix">
+<code class="descclassname">autocnet.transformation.fundamental_matrix.</code><code class="descname">compute_fundamental_matrix</code><span class="sig-paren">(</span><em>kp1</em>, <em>kp2</em>, <em>method='mle'</em>, <em>reproj_threshold=2.0</em>, <em>confidence=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/transformation/fundamental_matrix.html#compute_fundamental_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.transformation.fundamental_matrix.compute_fundamental_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two arrays of keypoints compute the fundamental matrix.  This function
+accepts two dataframe of keypoints that have</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>kp1</strong> (<em>arraylike</em>) &#8211; (n, 2) of coordinates from the source image</li>
+<li><strong>kp2</strong> (<em>ndarray</em>) &#8211; (n, 2) of coordinates from the destination image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>method <span class="classifier-delimiter">:</span> <span class="classifier">{&#8216;ransac&#8217;, &#8216;lmeds&#8217;, &#8216;normal&#8217;, &#8216;8point&#8217;}</span></dt>
+<dd>The openCV algorithm to use for outlier detection</dd>
+<dt>reproj_threshold <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The maximum distances in pixels a reprojected points
+can be from the epipolar line to be considered an inlier</dd>
+<dt>confidence <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>[0, 1] that the estimated matrix is correct</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>While the method is user definable, if the number of input points
+is &lt; 7, normal outlier detection is automatically used, if 7 &gt; n &gt; 15,
+least medians is used, and if 7 &gt; 15, ransac can be used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.transformation.fundamental_matrix.compute_reprojection_error">
+<code class="descclassname">autocnet.transformation.fundamental_matrix.</code><code class="descname">compute_reprojection_error</code><span class="sig-paren">(</span><em>F</em>, <em>x</em>, <em>x1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/transformation/fundamental_matrix.html#compute_reprojection_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.transformation.fundamental_matrix.compute_reprojection_error" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Given a set of matches and a known fundamental matrix,
+compute distance between match points and the associated
+epipolar lines.</p>
+<p>The distance between a point and the associated epipolar
+line is computed as: $d =</p>
+</div></blockquote>
+<p>rac{lvert ax_{0} + by_{0} + c
+vert}{sqrt{a^{2} + b^{2}}}$.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>F <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>(3,3) Fundamental matrix</dd>
+<dt>x <span class="classifier-delimiter">:</span> <span class="classifier">arraylike</span></dt>
+<dd>(n,2) or (n,3) array of homogeneous coordinates</dd>
+<dt>x1 <span class="classifier-delimiter">:</span> <span class="classifier">arraylike</span></dt>
+<dd>(n,2) or (n,3) array of homogeneous coordinates with the same
+length as argument x</dd>
+</dl>
+<dl class="docutils">
+<dt>F_error <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>n,1 vector of reprojection errors</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.transformation.fundamental_matrix.enforce_singularity_constraint">
+<code class="descclassname">autocnet.transformation.fundamental_matrix.</code><code class="descname">enforce_singularity_constraint</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/transformation/fundamental_matrix.html#enforce_singularity_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.transformation.fundamental_matrix.enforce_singularity_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>The fundamental matrix should be rank 2.  In instances when it is not,
+the singularity constraint should be enforced.  This is forces epipolar lines
+to be conincident.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>F</strong> (<em>ndarray</em>) &#8211; (3,3) Fundamental Matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>F</strong> &#8211; (3,3) Singular Fundamental Matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="hartley2003" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Hartley2003]</td><td></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="autocnet.transformation.fundamental_matrix.update_fundamental_mask">
+<code class="descclassname">autocnet.transformation.fundamental_matrix.</code><code class="descname">update_fundamental_mask</code><span class="sig-paren">(</span><em>F</em>, <em>x1</em>, <em>x2</em>, <em>threshold=1.0</em>, <em>index=None</em>, <em>method='reprojection'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/autocnet/transformation/fundamental_matrix.html#update_fundamental_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autocnet.transformation.fundamental_matrix.update_fundamental_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Fundamental matrix and two sets of points, compute the
+reprojection error between x1 and x2.  A mask is returned with all
+repojection errors greater than the error set to false.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>F</strong> (<em>ndarray</em>) &#8211; (3,3) Fundamental matrix</li>
+<li><strong>x1</strong> (<em>arraylike</em>) &#8211; (n,2) or (n,3) array of homogeneous coordinates</li>
+<li><strong>x2</strong> (<em>arraylike</em>) &#8211; (n,2) or (n,3) array of homogeneous coordinates</li>
+<li><strong>threshold</strong> (<em>float</em>) &#8211; The new upper limit for error.  If using
+reprojection this is measured in pixels (the default).  If
+using fundamental, the idealized error is 0.  Values +- 0.05
+should be good.</li>
+<li><strong>index</strong> (<em>ndarray</em>) &#8211; Optional index for mapping between reprojective error
+and an associated dataframe (e.g., an indexed matches dataframe).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mask</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
+      </li>
+      <li>
+      Last updated on Jul 18, 2017.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

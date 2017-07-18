@@ -27,7 +27,7 @@
     <link rel="index" title="Index" href="genindex.html" >
     <link rel="search" title="Search" href="search.html" >
     <link rel="top" title="AutoCNet" href="#" >
-    <link rel="next" title="User Guide" href="users/index.html" > 
+    <link rel="next" title="&lt;no title&gt;" href="users/index.html" > 
   </head>
   <body>
 
@@ -59,7 +59,7 @@
            >modules</a>
       </li>
       <li class="active">
-        <a href="users/index.html" title="User Guide"
+        <a href="users/index.html" title="&lt;no title&gt;"
            accesskey="N">next</a>
       </li>
     </ul>
@@ -75,9 +75,22 @@
             <p class="logo"><a href="#">
               <img class="logo" src="_static/favicon.png" alt="Logo">
             </a></p>
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">AutoCNet</a><ul>
+<li><a class="reference internal" href="#tutorials">Tutorials</a></li>
+<li><a class="reference internal" href="#issues-and-version-control">Issues and Version Control</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#developers">Developers</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Next topic</h4>
   <p class="topless"><a href="users/index.html"
-                        title="next chapter">User Guide</a></p>
+                        title="next chapter">&lt;no title&gt;</a></p>
   <h3>This Page</h3>
   <div>
     <a href="_sources/index.rst.txt"
@@ -94,16 +107,117 @@
         <div class="bodywrapper">
           <div class="body" id="spc-section-body">
             
-  <div class="section" id="autocnet">
+  <div class="figure align-center" id="id1">
+<img alt="Sample Matching" src="_images/matched.png" />
+<p class="caption"><span class="caption-text">A sample of the AutoCNet library being used for pseudo-dense matching on straight-forward Apollo 15 metric camera images.  Blue points are identified correspondences and yellow lines indicate that the points are linked (correspond with one another).</span></p>
+</div>
+<div class="section" id="autocnet">
 <h1>AutoCNet<a class="headerlink" href="#autocnet" title="Permalink to this headline">¶</a></h1>
-<img alt="Sample Matching" class="align-center" src="_images/matched.png" />
-<p>AutoCNet is an open source library for the automated generation of sparse n-image
-control networks.  AutoCNet is licensed in <cite>the public domain</cite>.</p>
-<a class="reference external image-reference" href="users/installation.html"><img alt="_images/download2.png" src="_images/download2.png" style="width: 10%;" /></a>
-<a class="reference external image-reference" href="users/index.html"><img alt="_images/tutorial.png" src="_images/tutorial.png" style="width: 10%;" /></a>
-<a class="reference external image-reference" href="library/index.html"><img alt="_images/documentation.png" src="_images/documentation.png" style="width: 10%;" /></a>
-<a class="reference external image-reference" href="https://github.com/USGS-Astrogeology/autocnet/issues?state=open"><img alt="_images/bugs.png" src="_images/bugs.png" style="width: 10%;" /></a>
+<p>AutoCNet is an open source library (API) for the pseudo-automated generation of sparse n-image
+control networks.  AutoCNet is licensed in <a class="reference external" href="license.html">the public domain</a>.</p>
+<p>AutoCNet supports the following:</p>
+<ul class="simple">
+<li>32-bit CUDA based (GPU) keypoint extraction</li>
+<li>Support for images of arbitrary size using downsampling or tiling for feature extraction</li>
+<li>A reference implementation (the CandidateGraph) to demonstrate use of the API</li>
+</ul>
+<div class="section" id="tutorials">
+<h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
+<p>An example is worth 1000 pages of documentation.  Checkout our tutorials (jupyter notebooks).</p>
 <div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="users/installation.html">Install AutoCNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="users/tutorials/index.html">Working With Apollo Pan</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="issues-and-version-control">
+<h2>Issues and Version Control<a class="headerlink" href="#issues-and-version-control" title="Permalink to this headline">¶</a></h2>
+<p>This project is hosted on <a class="reference external" href="http://github.com/USGS-Astrogeology/autocnet">Github</a>. If you run into a problem, please open an <a class="reference external" href="https://github.com/USGS-Astrogeology/autocnet/issues?state=open">issue</a> on our <a class="reference external" href="https://github.com/USGS-Astrogeology/autocnet/issues?state=open">issue</a> tracker.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="library/index.html">Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="library/cg/index.html"><code class="docutils literal"><span class="pre">cg</span></code> &#8212; Computational Geometry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/cg/cg.html"><code class="docutils literal"><span class="pre">cg.cg</span></code> &#8212; Computational Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/control/index.html"><code class="docutils literal"><span class="pre">control</span></code> &#8212; Control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/control/control.html"><code class="docutils literal"><span class="pre">control.control</span></code> &#8212; Control Network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/fileio/index.html"><code class="docutils literal"><span class="pre">fileio</span></code> &#8212; File Input/Output</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/graph/index.html"><code class="docutils literal"><span class="pre">graph</span></code> &#8212; Graph Based Data Representaton</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/graph/network.html"><code class="docutils literal"><span class="pre">graph.network</span></code> &#8212; Network File Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/graph/node.html"><code class="docutils literal"><span class="pre">graph.node</span></code> &#8212; Network Node Object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/graph/edge.html"><code class="docutils literal"><span class="pre">graph.edge</span></code> &#8212; Network Edge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/graph/markov_cluster.html"><code class="docutils literal"><span class="pre">graph.markov_cluster</span></code> &#8212; Markov Clustering Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/matcher/index.html"><code class="docutils literal"><span class="pre">matcher</span></code> &#8212; Graph Based Data Representaton</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/matcher/index.html#cpu-based-feature-extraction-and-matching">CPU Based Feature Extraction and Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/matcher/index.html#cuda-based-feature-extraction-and-matching">CUDA Based Feature Extraction and Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/matcher/index.html#subpixel-refinement">Subpixel Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/matcher/index.html#spatial-suppression-function-examples">Spatial Suppression Function Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/transformation/index.html"><code class="docutils literal"><span class="pre">transformation</span></code> &#8212; Transformation Objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/transformation/index.html#reprojection-transformations">Reprojection Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="library/transformation/index.html#image-decomposition">Image Decomposition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/utils/index.html"><code class="docutils literal"><span class="pre">utils</span></code> &#8212; Utility Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/utils/utils.html"><code class="docutils literal"><span class="pre">utils.utils</span></code> &#8212; Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="library/vis/index.html"><code class="docutils literal"><span class="pre">vis</span></code> &#8212; Data Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="library/vis/graph_view.html"><code class="docutils literal"><span class="pre">vis.graph_view</span></code> &#8212; Graph Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="developers">
+<h2>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developers/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developers/contributing.html#types-of-contributions">Types of Contributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers/contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers/contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers/contributing.html#tips">Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers/authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developers/authors.html#development-team">Development Team</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers/authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers/history.html">Changelog</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Unlicense</a></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -125,10 +239,10 @@ control networks.  AutoCNet is licensed in <cite>the public domain</cite>.</p>
     <div class="row-fluid">
     <ul class="inline pull-left">
       <li>
-        &copy; Copyright 2015 - , AutoCNetDevelopers.
+        &copy; Copyright 2017 - , AutoCNetDevelopers.
       </li>
       <li>
-      Last updated on May 18, 2017.
+      Last updated on Jul 18, 2017.
       </li>
       <li>
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.5.6.
