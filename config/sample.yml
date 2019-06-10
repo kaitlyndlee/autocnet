@@ -45,6 +45,8 @@ spatial:
     semimajor_rad: 3396190  # in meters
     semiminor_rad: 3376200  # in meters
     proj4_str: '+proj:longlat +a:3396190 +b:3376200 +no_defs'
+    # Tiff used to generate height values for projection
+    dem_tiff: '/scratch/jlaura/mars/mars_aeroid.tif' 
 
 ### Working Directories ###
 directories:
@@ -77,4 +79,3 @@ algorithms:
           initial_y_size: 500
           corr_x_size: 40
           corr_y_size: 40
-
