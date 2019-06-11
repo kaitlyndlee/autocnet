@@ -43,7 +43,8 @@ def place_points_in_overlaps(cg, size_threshold=0.0007, reference=None,
     semi_minor = config['spatial']['semiminor_rad']
     ecef = pyproj.Proj(proj='geocent', a=semi_major, b=semi_minor)
     lla = pyproj.Proj(proj='latlon', a=semi_major, b=semi_minor)
-    dem_tiff = config['spatial']['dem_tiff']
+    mola_cube = config['spatial']['mola_cube']
+    gd = GeoDataset(mola_cube)
     
     # TODO: This should be a passable query where we can subset.
     for o in session.query(Overlay).\
@@ -65,13 +66,13 @@ def place_points_in_overlaps(cg, size_threshold=0.0007, reference=None,
         overlaps.remove(source)
         source = cg.node[source]['data']
         source_camera = source.camera
+
         for v in valid:
             point = Points(geom=shapely.geometry.Point(*v),
                            pointtype=2) # Would be 3 or 4 for ground
 
             # Calculate the height, the distance (in meters) above or 
             # below the aeroid (meters above or below the BCBF spheroid).
-            gd = GeoDataset(dem_tiff)
             px, py = gd.latlon_to_pixel(v[1], v[0])
             height = gd.read_array(1, [px, py, 1, 1])[0][0]
 
