@@ -45,8 +45,8 @@ spatial:
     semimajor_rad: 3396190  # in meters
     semiminor_rad: 3376200  # in meters
     proj4_str: '+proj:longlat +a:3396190 +b:3376200 +no_defs'
-    # Cub used to generate height values for projection
-    mola_cube: '/scratch/jlaura/mars/molaMarsPlanetaryRadius.cub'
+    # DEM used to generate height values for projection
+    dem: '/scratch/jlaura/mars/molaMarsPlanetaryRadius.cub'
 
 ### Working Directories ###
 directories:

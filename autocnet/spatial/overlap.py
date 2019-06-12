@@ -18,6 +18,8 @@ def place_points_in_overlaps(cg, size_threshold=0.0007, reference=None,
     Given a geometry, place points into the geometry by back-projecing using
     a sensor model.compgeom
 
+    The DEM specified in the config file will be used to calculate height point elevations.
+
     TODO: This shoucompgeomn once that package is stable.
 
     Parameters
@@ -43,8 +45,8 @@ def place_points_in_overlaps(cg, size_threshold=0.0007, reference=None,
     semi_minor = config['spatial']['semiminor_rad']
     ecef = pyproj.Proj(proj='geocent', a=semi_major, b=semi_minor)
     lla = pyproj.Proj(proj='latlon', a=semi_major, b=semi_minor)
-    mola_cube = config['spatial']['mola_cube']
-    gd = GeoDataset(mola_cube)
+    dem = config['spatial']['dem']
+    gd = GeoDataset(dem)
     
     # TODO: This should be a passable query where we can subset.
     for o in session.query(Overlay).\
