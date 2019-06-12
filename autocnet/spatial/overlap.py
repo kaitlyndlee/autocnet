@@ -186,7 +186,7 @@ def place_points_in_overlap(nodes, geom, dem=None,
         if dem is None:
             height = 0
         else:
-            px, py = gd.latlon_to_pixel(lat, lon)
+            px, py = dem.latlon_to_pixel(lat, lon)
             height = dem.read_array(1, [px, py, 1, 1])[0][0]
 
         # Get the BCEF coordinate from the lon, lat
