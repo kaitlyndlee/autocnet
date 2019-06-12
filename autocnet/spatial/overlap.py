@@ -72,14 +72,16 @@ def place_points_in_overlaps(cg, size_threshold=0.0007, reference=None,
         for v in valid:
             point = Points(geom=shapely.geometry.Point(*v),
                            pointtype=2) # Would be 3 or 4 for ground
+            lon = v[0]
+            lat = v[1]
 
             # Calculate the height, the distance (in meters) above or 
             # below the aeroid (meters above or below the BCBF spheroid).
-            px, py = gd.latlon_to_pixel(v[1], v[0])
+            px, py = gd.latlon_to_pixel(lat, lon)
             height = gd.read_array(1, [px, py, 1, 1])[0][0]
 
             # Get the BCEF coordinate from the lon, lat
-            x, y, z = pyproj.transform(lla, ecef, v[0], v[1], height)
+            x, y, z = pyproj.transform(lla, ecef, lon, lat, height)
             gnd = csmapi.EcefCoord(x, y, z)
 
             # Grab the source image. This is just the node with the lowest ID, nothing smart.
