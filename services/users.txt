@@ -5,3 +5,4 @@
 "krodriguez" "krodriguez"
 "acpaquette" "acpaquette"
 "jmapel" "jmapel"
+"autocnet_workshop" "QCe30sX@k3"
